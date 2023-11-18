@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescripción Médica</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Styles/stylePrescripcion.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="prescription-form">
+            <div class="row">
+                <div class="col-md-8">
+                    <h3>PRESCRIPCIÓN MÉDICA</h3>
+                </div>
+                <div class="col-md-4">
+                    <h3>ENTIDAD</h3>
+                </div>
+            </div>
+            <div class="row prescription-section">
+                <div class="col-12">
+                    <label for="historiaClinica">N° historia clínica:</label>
+                    <span>{{ historia_clinica }}</span>
+                </div>
+            </div>
+            <div class="row prescription-section">
+                <div class="col-md-6">
+                    <label for="paciente">Paciente:</label>
+                    <span>{{ paciente_nombre }}</span>
+                </div>
+                <div class="col-md-6">
+                    <label for="consulta">Motivo consulta:</label>
+                    <span>{{ motivo_consulta }}</span>
+                </div>
+            </div>
+            <!-- Repetir la estructura de row y col-md-6 para cada par de campos -->
+            <!-- ... -->
+            <div class="row prescription-section">
+                <div class="col-md-6">
+                    <label for="producto">Código producto:</label>
+                    <span>{{ codigo_producto }}</span>
+                </div>
+                <div class="col-md-6">
+                    <label for="producto">Producto:</label>
+                    <span>{{ producto }}</span>
+                </div>
+            </div>
+            <!-- Repetir para los campos restantes -->
+            <div class="row prescription-section">
+                <div class="col-md-6">
+                    <label for="recomendaciones">Recomendaciones:</label>
+                    <span>{{ recomendaciones }}</span>
+                </div>
+                <div class="col-md-6">
+                    <label for="vencimiento">Vencimiento:</label>
+                    <span>{{ vencimiento }}</span>
+                </div>
+            </div>
+            <!-- Sección para la firma del profesional -->
+            <div class="row prescription-section">
+                <div class="col-12">
+                    <label for="profesional">Profesional:</label>
+                    <span>{{ profesional_nombre }}</span>
+                    <!-- Más detalles del profesional -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

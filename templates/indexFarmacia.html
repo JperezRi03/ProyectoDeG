@@ -1,0 +1,50 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{url_for('static', filename='Styles/styleMain.css')}}">
+</head>
+
+<body>
+    <div class="header-buttons">
+        <h5>¿Cómo quieres ingresar?</h5>
+        <a class="btn btn-primary" href="{{ url_for('paciente_index') }}">PACIENTE</a>
+        <a class="btn btn-primary" href="{{ url_for('administrador_index') }}">ADMINISTRADOR</a>
+        <a class="btn btn-primary" href="{{ url_for('medico_index') }}">MÉDICO</a>
+        <a class="btn btn-primary" href="{{ url_for('farmacia_index') }}">FARMACIA</a>
+    </div>
+    
+    <div class="container">
+        <div class="login-container">
+            <div class="avatar">
+                FARMACIA
+            </div>
+            <form>
+                <div class="form-group">
+                    <label for="username">USUARIO:</label>
+                    <input type="text" class="form-control" id="username" placeholder="Usuario">
+                </div>
+                <div class="form-group">
+                    <label for="password">CONTRASEÑA:</label>
+                    <input type="password" class="form-control" id="password" placeholder="Contraseña">
+                </div>
+                <div class="footer-options">
+                    <div>
+                        <a href="#">Ha olvidado su contraseña? Recuperar</a>
+                    </div>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-login">INICIAR SESION</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts necesarios para Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

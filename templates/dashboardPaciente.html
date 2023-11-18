@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 50px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: white;
+            padding: 50px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px; /* Ajustado para hacer el cuadro más grande */
+            margin: auto;
+        }
+        h3 {
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+        .btn {
+            width: 100%;
+            padding: 15px; /* Ajustado para hacer los botones más altos */
+            margin-bottom: 20px; /* Ajustado para más espacio entre botones */
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <p>¡Hola {{ nombre_usuario }}! ¿Qué quieres hacer hoy?</p>
+        <a href="/ver_formulas_medicas" class="btn btn-info">Ver Fórmulas Médicas</a>
+        <a href="/ver_historia_clinica" class="btn btn-info">Ver Historia Clínica</a>
+    </div>
+    <!-- Scripts de Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

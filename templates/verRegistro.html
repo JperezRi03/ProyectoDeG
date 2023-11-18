@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Registros</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Styles/stylesVisualizacion.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Registros de Prescripciones</h2>
+        <div class="table-responsive">
+            <div class="mt-3">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Doctor</th>
+                            <th>Correo Electrónico</th>
+                            <th>Lugar de Prescripción</th>
+                            <th>Fecha de Prescripción</th>
+                            <th>Nombre del Paciente</th>
+                            <th>Cédula del Paciente</th>
+                            <th>N° Historia Clínica</th>
+                            <th>Tipo de Usuario</th>
+                            <th>Forma Farmacéutica</th>
+                            <th>Dosis Diaria</th>
+                            <th>Duración del Tratamiento</th>
+                            <th>Cantidad Total</th>
+                            <th>Diagnóstico</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for registro in registros %}
+                            <tr>
+                                <td>{{ registro.nombre_doc }}</td>
+                                <td>{{ registro.correo_doc }}</td>
+                                <td>{{ registro.Lugar_Pres }}</td>
+                                <td>{{ registro.Fecha_Pres }}</td>
+                                <td>{{ registro.nombre_paciente }}</td>
+                                <td>{{ registro.cedula_paciente }}</td>
+                                <td>{{ registro.numero_hc }}</td>
+                                <td>{{ registro.tipo_usuario }}</td>
+                                <td>{{ registro.forma_farmaceutica }}</td>
+                                <td>{{ registro.dosis_diaria }}</td>
+                                <td>{{ registro.duracion_tratamiento }}</td>
+                                <td>{{ registro.cantidad_total }}</td>
+                                <td>{{ registro.diagnostico }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Scripts necesarios para Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

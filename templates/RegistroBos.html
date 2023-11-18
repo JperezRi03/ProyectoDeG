@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Datos</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='Styles/stylesForm.css')}}">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h2>Registro de Datos</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" action="/DashboardMedico">
+                    <div class="row">
+                        <!-- Columna izquierda -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="Nombre_Doc">Nombre Del Doctor:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-user-md"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" id="Nombre_Doc" name="nombre_doc" placeholder="Nombre del Doctor">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Correo_doc">Correo Electronico Del Doctor:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    </div>
+                                    <input type="email" class="form-control" id="Correo_doc" name="Correo_doc" placeholder="Correo electrónico">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Lugar_Pres">Lugar de Prescripcion:</label>
+                                <input type="text" class="form-control" id="Lugar_Pres" name="Lugar_Pres" placeholder="Lugar de Prescripción">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Fecha_Pres">Fecha de la Prescripcion:</label>
+                                <input type="date" class="form-control" id="Fecha_Pres" name="Fecha_Pres">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Nombre_Paciente">Nombre del Paciente:</label>
+                                <input type="text" class="form-control" id="Nombre_Paciente" name="Nombre_Paciente" placeholder="Nombre del Paciente">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Cedula_Paciente">Cedula del Paciente:</label>
+                                <input type="text" class="form-control" id="Cedula_Paciente" name="Cedula_Paciente" placeholder="Cédula del Paciente">
+                            </div>
+
+                        </div>
+
+                        <!-- Columna derecha -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="numero_HC">N° Historia clinica:</label>
+                                <input type="text" class="form-control" id="numero_HC" name="numero_HC" placeholder="N° Historia Clínica">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tipo_usuario">Tipo de usuario: (contributivo, subsidiado, particular, otro).</label>
+                                <input type="text" class="form-control" id="tipo_usuario" name="tipo_usuario" placeholder="Tipo de Usuario">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="forma_farmaceutica">Concentración y forma farmacéutica.</label>
+                                <input type="text" class="form-control" id="forma_farmaceutica" name="forma_farmaceutica" placeholder="Concentración y forma farmacéutica">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dosis_diaria">Dosis diaria prescrita:</label>
+                                <input type="text" class="form-control" id="dosis_diaria" name="dosis_diaria" placeholder="Dosis diaria prescrita">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="duracion_tratamiento">Duración del tratamiento:</label>
+                                <input type="text" class="form-control" id="duracion_tratamiento" name="duracion_tratamiento" placeholder="Duración del tratamiento">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cantidad_total">Cantidad total de medicamento prescrito:</label>
+                                <input type="text" class="form-control" id="cantidad_total" name="cantidad_total" placeholder="Cantidad total de medicamento prescrito">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="diagnostico">Diagnostico:</label>
+                        <textarea class="form-control" id="diagnostico" name="diagnostico" rows="4" placeholder="Diagnóstico"></textarea>
+                    </div>
+
+                    <div class="form-group text-center">
+                        <button type="submit" class="btn btn-secondary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts necesarios para Bootstrap y Font Awesome -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+</body>
+
+</html>
