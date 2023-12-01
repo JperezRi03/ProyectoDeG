@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prescripción Médica</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='Styles/stylePDF.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="prescription-container">
+            <div class="header-section d-flex">
+                <div class="block flex-fill mr-2">
+                    <label for="Fecha_Pres">Lugar, Fecha, Hora</label>
+                    <input type="text" name="Fecha_Pres" id="Fecha_Pres">
+                </div>
+                <div class="block text-center flex-fill">
+                    <h2>PRESCRIPCIÓN MÉDICA</h2>
+                </div>
+                <div class="block flex-fill ml-2">
+                    <label for="entidad">ENTIDAD</label>
+                    <input type="text" name="entidad" id="entidad">
+                </div>
+            </div>
+            <div class="patient-info d-flex">
+                <div class="block flex-fill mr-2">
+
+                    <label for="numero_HC">N° historia clínica</label>
+                    <input type="text" name="numero_HC" id="numero_HC">
+
+                    <label for="nombre_doc">Paciente</label>
+                    <input type="text" name="nombre_doc" id="nombre_doc">
+
+                    <label for="Cedula_Paciente">N° de Documento</label>
+                    <input type="text" name="Cedula_Paciente" id="Cedula_Paciente">
+
+                    <label for="tipo_usuario">Regimen</label>
+                    <input type="text" name="tipo_usuario" id="tipo_usuario">
+                </div>
+                <div class="block flex-fill ml-2">
+                    <label for="forma_farmaceutica">Concentración y forma farmacéutica.</label>
+                    <input type="text" name="forma_farmaceutica" id="forma_farmaceutica">
+
+                    <label for="dosis_diaria">Dosis diaria prescrita:</label>
+                    <input type="text" name="dosis_diaria" id="dosis_diaria">
+
+                    <label for="duracion_tratamiento">Duración del tratamiento:</label>
+                    <input type="text" name="duracion_tratamiento" id="duracion_tratamiento">
+
+                    <label for="cantidad_total">Cantidad total de medicamento prescrito:</label>
+                    <input type="text" name="cantidad_total" id="cantidad_total">
+
+                    <!-- Replicar la estructura para otros campos requeridos -->
+                </div>
+                
+
+            </div>
+            <!-- Continuar con la estructura para los campos restantes -->
+            <!-- ... -->
+            <div class="block flex-fill ml-2">
+
+                    <label for="nombre_doc">Nombre Del Doctor:</label>
+                    <input type="text" name="nombre_doc" id="nombre_doc" value="{{nombre_doc}}" >
+
+                    <label for="Correo_doc">Correo Electronico Del Doctor:</label>
+                    <input type="text" name="Correo_doc" id="Correo_doc">
+
+                    <label for="Lugar_Pres">Lugar de Prescripcion:</label>
+                    <input type="text" name="Lugar_Pres" id="Lugar_Pres">
+                <!-- Bloque para la información del profesional -->
+            </div>
+
+            <div class="footer-section d-flex">
+                <div class="block flex-fill mr-2">
+                    <label for="recomendaciones">Diagnostico:</label>
+                    <textarea name="recomendaciones" id="recomendaciones" rows="3"></textarea>
+                </div>
+                <div class="block flex-fill ml-2">
+                    <label for="firma">Firma: </label>
+
+                    <!-- Bloque para la información del profesional -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+

@@ -1,5 +1,7 @@
 import os
-from flask import Flask, render_template, request, flash, redirect, url_for, session
+from flask import Flask, render_template, request, flash, redirect, url_for, session, Response
+from flask_weasyprint import HTML, render_pdf
+
 import psycopg2
 
 app = Flask('test', template_folder= 'templates')
@@ -153,7 +155,7 @@ def registro():
         return redirect(url_for('ver_registros'))
     
     # Mostrar el formulario en GET request.
-    return render_template('RegistroBos .html')
+    return render_template('RegistroBos.html')
 
 @app.route('/registros')
 def ver_registros():
@@ -161,8 +163,26 @@ def ver_registros():
     return render_template('VerRegistro.html', registros=registros)
 
 
+## ----------------------------------------------------------------------------- GENERAR_PDF -----------------------------------------------------------------------------
+
+@app.route('/generate_pdf', methods=['POST'])
+def generate_pdf():
 
 
+    nombre_doc = request.form['nombre_doc']
+    # Recoge los datos del formulario
+    data = {
+        'nombre_doc': nombre_doc,
+        ##'Fecha_Pres': request.form.get('Fecha_Pres', ''),
+        ##'entidad': request.form.get('entidad', ''),
+        # ... más datos del formulario ...
+    }
+    
+    # Renderiza tu plantilla HTML con los datos
+    rendered_html = render_template('plantillapdf_Prescripcion.html', **data)
+    
+    # Convierte el HTML renderizado en un PDF y envíalo como respuesta
+    return render_pdf(HTML(string=rendered_html))
 
 ## ----------------------------------------------------------------------------- MAIN -----------------------------------------------------------------------------
 if __name__ == '__main__':
