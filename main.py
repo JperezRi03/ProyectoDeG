@@ -1,6 +1,7 @@
 import os
-from flask import Flask, render_template, request, flash, redirect, url_for, session, Response
-from flask_weasyprint import HTML, render_pdf
+from flask import Flask, render_template, request, flash, redirect, url_for, session, Response, send_file
+import pdfkit
+##from flask_weasyprint import HTML, render_pdf
 
 import psycopg2
 
@@ -164,25 +165,29 @@ def ver_registros():
 
 
 ## ----------------------------------------------------------------------------- GENERAR_PDF -----------------------------------------------------------------------------
+config= pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
-@app.route('/generate_pdf', methods=['POST'])
+@app.route('/generate_pdf', methods=['GET', 'POST'])
 def generate_pdf():
+    if request.method == 'POST':
+        # Recoger datos del formulario
+        data = request.form.to_dict()
+        print(data)
 
+        # Crear HTML a partir de la plantilla con los datos
+        html = render_template('plantillapdf_Prescripcion.html', data=data)
 
-    nombre_doc = request.form['nombre_doc']
-    # Recoge los datos del formulario
-    data = {
-        'nombre_doc': nombre_doc,
-        ##'Fecha_Pres': request.form.get('Fecha_Pres', ''),
-        ##'entidad': request.form.get('entidad', ''),
-        # ... más datos del formulario ...
-    }
-    
-    # Renderiza tu plantilla HTML con los datos
-    rendered_html = render_template('plantillapdf_Prescripcion.html', **data)
-    
-    # Convierte el HTML renderizado en un PDF y envíalo como respuesta
-    return render_pdf(HTML(string=rendered_html))
+        # Ruta para el archivo PDF de salida
+        pdf_output = "output.pdf"
+
+        # Configuración de pdfkit
+        pdfkit.from_string(html, pdf_output, configuration=config)
+
+        # Devolver el PDF al usuario para descargarlo
+        return send_file(pdf_output, as_attachment=True)
+
+    return render_template('muestra.html')
+
 
 ## ----------------------------------------------------------------------------- MAIN -----------------------------------------------------------------------------
 if __name__ == '__main__':
