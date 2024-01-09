@@ -67,43 +67,44 @@
             <div class="header-section d-flex">
                 <div class="block flex-fill mr-2">
                     <label for="Fecha_Pres">Lugar, Fecha, Hora</label>
-                    <input type="text" name="Fecha_Pres" id="Fecha_Pres">
+                    <input type="text" name="Fecha_Pres" id="Fecha_Pres" value="{{ data['Fecha_Pres'] }}">
                 </div>
                 <div class="block text-center flex-fill">
                     <h2>PRESCRIPCIÓN MÉDICA</h2>
                 </div>
                 <div class="block flex-fill ml-2">
                     <label for="entidad">ENTIDAD</label>
-                    <input type="text" name="entidad" id="entidad">
+                    <input type="text" name="entidad" id="entidad" value=" ">
                 </div>
             </div>
             <div class="patient-info d-flex">
                 <div class="block flex-fill mr-2">
 
                     <label for="numero_HC">N° historia clínica</label>
-                    <input type="text" name="numero_HC" id="numero_HC">
+                    <input type="text" name="numero_HC" id="numero_HC" value="{{ data['numero_hc'] }}">
 
                     <label for="nombre_doc">Paciente</label>
-                    <input type="text" name="nombre_doc" id="nombre_doc">
+                    <input type="text" name="nombre_doc" id="nombre_doc" value="{{ data['nombre_doc'] }}">
 
                     <label for="Cedula_Paciente">N° de Documento</label>
-                    <input type="text" name="Cedula_Paciente" id="Cedula_Paciente">
+                    <input type="text" name="Cedula_Paciente" id="Cedula_Paciente" value="{{ data['cedula_paciente'] }}">
 
                     <label for="tipo_usuario">Regimen</label>
-                    <input type="text" name="tipo_usuario" id="tipo_usuario">
+                    <input type="text" name="tipo_usuario" id="tipo_usuario" value="{{ data['tipo_usuario'] }}">
                 </div>
+
                 <div class="block flex-fill ml-2">
                     <label for="forma_farmaceutica">Concentración y forma farmacéutica.</label>
-                    <input type="text" name="forma_farmaceutica" id="forma_farmaceutica">
+                    <input type="text" name="forma_farmaceutica" id="forma_farmaceutica" value="{{ data['forma_farmaceutica'] }}">
 
                     <label for="dosis_diaria">Dosis diaria prescrita:</label>
-                    <input type="text" name="dosis_diaria" id="dosis_diaria">
+                    <input type="text" name="dosis_diaria" id="dosis_diaria" value="{{ data['dosis_diaria'] }}">
 
                     <label for="duracion_tratamiento">Duración del tratamiento:</label>
-                    <input type="text" name="duracion_tratamiento" id="duracion_tratamiento">
+                    <input type="text" name="duracion_tratamiento" id="duracion_tratamiento" value="{{ data['duracion_tratamiento'] }}">
 
                     <label for="cantidad_total">Cantidad total de medicamento prescrito:</label>
-                    <input type="text" name="cantidad_total" id="cantidad_total">
+                    <input type="text" name="cantidad_total" id="cantidad_total" value="{{ data['cantidad_total'] }}">
 
                     <!-- Replicar la estructura para otros campos requeridos -->
                 </div>
@@ -115,20 +116,20 @@
             <div class="block flex-fill ml-2">
 
                     <label for="nombre_doc">Nombre Del Doctor:</label>
-                    <input type="text" name="nombre_doc" id="nombre_doc" value="{{nombre_doc}}" >
+                    <input type="text" name="nombre_doc" id="nombre_doc" value="{{ data['nombre_doc'] }}" >
 
                     <label for="Correo_doc">Correo Electronico Del Doctor:</label>
-                    <input type="text" name="Correo_doc" id="Correo_doc">
+                    <input type="text" name="Correo_doc" id="Correo_doc" value="{{ data['correo_doc'] }}">
 
                     <label for="Lugar_Pres">Lugar de Prescripcion:</label>
-                    <input type="text" name="Lugar_Pres" id="Lugar_Pres">
+                    <input type="text" name="Lugar_Pres" id="Lugar_Pres" value="{{ data['Lugar_Pres'] }}">
                 <!-- Bloque para la información del profesional -->
             </div>
 
             <div class="footer-section d-flex">
                 <div class="block flex-fill mr-2">
                     <label for="recomendaciones">Diagnostico:</label>
-                    <textarea name="recomendaciones" id="recomendaciones" rows="3"></textarea>
+                    <textarea name="recomendaciones" id="recomendaciones" rows="3" value="{{ data['diagnostico'] }}"></textarea>
                 </div>
                 <div class="block flex-fill ml-2">
                     <label for="firma">Firma: </label>

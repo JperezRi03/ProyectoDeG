@@ -33,7 +33,6 @@
                     <tbody>
                         {% for registro in registros %}
                             <tr>
-
                                 
                                 <td>{{ registro.nombre_doc }}</td>
                                 <td>{{ registro.correo_doc }}</td>
@@ -54,6 +53,17 @@
                                             <!-- Incluir todos los campos necesarios como campos ocultos -->
                                             <input type="hidden" name="nombre_doc" value="{{ registro.nombre_doc }}">
                                             <input type="hidden" name="correo_doc" value="{{ registro.correo_doc }}">
+                                            <input type="hidden" name="Lugar_Pres" value="{{ registro.Lugar_Pres }}">
+                                            <input type="hidden" name="Fecha_Pres" value="{{ registro.Fecha_Pres }}">
+                                            <input type="hidden" name="nombre_paciente" value="{{ registro.nombre_paciente }}">
+                                            <input type="hidden" name="cedula_paciente" value="{{ registro.cedula_paciente }}">
+                                            <input type="hidden" name="numero_hc" value="{{ registro.numero_hc }}">
+                                            <input type="hidden" name="tipo_usuario" value="{{ registro.tipo_usuario }}">
+                                            <input type="hidden" name="forma_farmaceutica" value="{{ registro.forma_farmaceutica }}">
+                                            <input type="hidden" name="dosis_diaria" value="{{ registro.dosis_diaria }}">
+                                            <input type="hidden" name="duracion_tratamiento" value="{{ registro.duracion_tratamiento }}">
+                                            <input type="hidden" name="cantidad_total" value="{{ registro.cantidad_total }}">
+                                            <input type="hidden" name="diagnostico" value="{{ registro.diagnostico }}">
                                             <!-- ... otros campos ... -->
                                             <button type="submit" class="btn btn-primary">Generar PDF</button>
                                         </form>

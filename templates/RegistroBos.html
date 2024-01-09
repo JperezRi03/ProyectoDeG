@@ -76,8 +76,12 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="forma_farmaceutica">Concentración y forma farmacéutica.</label>
-                                <input type="text" class="form-control" id="forma_farmaceutica" name="forma_farmaceutica" placeholder="Concentración y forma farmacéutica">
+                                <label for="forma_farmaceutica">Medicamento Asignado.</label>
+                                <select class="form-control" id="forma_farmaceutica" name="forma_farmaceutica">
+                                    {% for medicamento in medicamentos %}
+                                        <option value="{{ medicamento[1] }}">{{ medicamento[0] }} - {{ medicamento[1] }} </option>
+                                    {% endfor %}
+                                </select>
                             </div>
 
                             <div class="form-group">
@@ -115,6 +119,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-</body>
 
+</body>
 </html>

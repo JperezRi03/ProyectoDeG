@@ -28,12 +28,28 @@ def verificar_credenciales(username, password):
     return False
 
 def verificar_credencialesMedico(username, password):
-    cursor.execute("SELECT usuario, contraseña FROM medicoLogin WHERE usuario = %s AND contraseña = %s", (username, password,))
+    cursor.execute("SELECT id, usuario, contraseña FROM medicoLogin WHERE usuario = %s AND contraseña = %s", (username, password,))
     result = cursor.fetchone()
-    if result and result[1] == password:
-        return True
-    return False
+    if result and result[2] == password:
+        return result[0], True  # Devuelve el ID y True si las credenciales son correctas
+    return None, False
 
+def obtener_medicamentos():
+    # Consulta SQL que devuelve todos los medicamentos en la BD
+    cursor.execute("SELECT * FROM medicamentos_Stock")
+    data = cursor.fetchall()
+    # Devuelve una lista de tuplas
+    return data
+
+def guardar_prescripcion(data):
+    medico_id = session.get('medico_id')
+
+
+    cursor.execute(
+        "INSERT INTO prescripciones (id_medico, id_medicamento, nombre_medicamento, nombre_doc, correo_doc, lugar_prescripcion, fecha_prescripcion, nombre_paciente, cedula_paciente, numero_hc, tipo_usuario, dosis_diaria, duracion_tratamiento, cantidad_total_medicamento) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (medico_id, 1, data['forma_farmaceutica'], data['nombre_doc'], data['correo_doc'], data['Lugar_Pres'], data['Fecha_Pres'], data['nombre_paciente'], data['cedula_paciente'], data['numero_hc'], data['tipo_usuario'], data['dosis_diaria'], data['duracion_tratamiento'], data['cantidad_total'])
+    )
+    conn.commit()
 
 
 
@@ -65,8 +81,9 @@ def farmacia_index():
 
 @app.route('/RegistroBos')
 def RegistroBos():
-    # Aquí va la lógica para la página de la farmacia
-    return render_template('RegistroBos.html')
+    medicamentos = obtener_medicamentos()   
+    ##print(medicamentos)
+    return render_template('RegistroBos.html',medicamentos=medicamentos)
 
 
 
@@ -94,16 +111,19 @@ def DashboardPaciente():
 ## ----------------------------------------------------------------------------- MEDICO -----------------------------------------------------------------------------
 
 @app.route('/loginMedico', methods=['POST'])
-def loginMedico():    
+def loginMedico():
     username = request.form['username']
     password = request.form['password']
+    medico_id, authenticated = verificar_credencialesMedico(username, password)
 
-    if verificar_credencialesMedico(username, password):
+    if authenticated:
+        session['medico_id'] = medico_id  # Almacena el ID del médico en la sesión
         session['nombre_usuario'] = username
-        return redirect(url_for('DashboardMedico'))  # Puedes cambiar esto a una redirección
+        return redirect(url_for('DashboardMedico'))
     else:
-        flash('Usuario o contraseña incorrectos.', 'warning')  # 'warning' es la categoría del mensaje
-        return redirect(url_for('index'))  # Puedes mostrar un mensaje de error en tu página de inicio de sesión
+        flash('Usuario o contraseña incorrectos.', 'warning')
+        return redirect(url_for('index'))
+
 
 @app.route('/DashboardMedico')
 def DashboardMedico():
@@ -111,10 +131,10 @@ def DashboardMedico():
     return render_template('DashboardMedico.html', nombre_usuario = nombre_usuario)
 
 registros = []
-
 @app.route('/DashboardMedico', methods=['GET', 'POST'])
 def registro():
     if request.method == 'POST':
+
         # Captura la información del formulario.
         nombre_doc = request.form['nombre_doc']
         correo_doc = request.form['Correo_doc']
@@ -144,13 +164,16 @@ def registro():
             'dosis_diaria': dosis_diaria,
             'duracion_tratamiento': duracion_tratamiento,
             'cantidad_total': cantidad_total,
-            'diagnostico': diagnostico
+            'diagnostico': diagnostico,
         }
+
+        print(registro_info)
 
     # Insertar en la tabla prescripciones
         
         # Agregar el registro a la lista.
         registros.append(registro_info)
+        guardar_prescripcion(registro_info)
         
         # Redirigir a la página de visualización, por ejemplo.
         return redirect(url_for('ver_registros'))
@@ -167,12 +190,29 @@ def ver_registros():
 ## ----------------------------------------------------------------------------- GENERAR_PDF -----------------------------------------------------------------------------
 config= pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
+
 @app.route('/generate_pdf', methods=['GET', 'POST'])
 def generate_pdf():
     if request.method == 'POST':
         # Recoger datos del formulario
         data = request.form.to_dict()
-        print(data)
+        ##print(data)
+
+
+
+        nombre_doc = data['nombre_doc']
+        correo_doc = data['correo_doc']
+        Lugar_Pres = data['Lugar_Pres']
+        Fecha_Pres = data['Fecha_Pres']
+        nombre_paciente = data['nombre_paciente']
+        cedula_paciente = data['cedula_paciente']
+        numero_hc = data['numero_hc']
+        tipo_usuario = data['tipo_usuario']
+        forma_farmaceutica = data['forma_farmaceutica']
+        dosis_diaria = data['dosis_diaria']
+        duracion_tratamiento = data['duracion_tratamiento']
+        cantidad_total = data['cantidad_total']
+        diagnostico = data['diagnostico']
 
         # Crear HTML a partir de la plantilla con los datos
         html = render_template('plantillapdf_Prescripcion.html', data=data)
