@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Registros</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            max-width: 90%; /* Ajusta el ancho máximo */
+            margin: auto; /* Centra el contenedor en la página */
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .thead-dark th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+    <!--- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Registros de Prescripciones Médicas</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Nombre del Doctor</th>
+                        <th>Correo Electrónico</th>
+                        <th>Lugar de Prescripción</th>
+                        <th>Fecha de Prescripción</th>
+                        <th>Nombre del Paciente</th>
+                        <th>Cédula del Paciente</th>
+                        <th>N° Historia Clínica</th>
+                        <th>Tipo de Usuario</th>
+                        <th>Forma Farmacéutica</th>
+                        <th>Dosis Diaria</th>
+                        <th>Duración del Tratamiento</th>
+                        <th>Cantidad Total</th>
+                        <th>Diagnóstico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prescripciones in prescripciones %}
+                        <tr>
+                                <td>{{ prescripciones[4] }}</td>
+                                <td>{{ prescripciones[5] }}</td>
+                                <td>{{ prescripciones[6] }}</td>
+                                <td>{{ prescripciones[7] }}</td>
+                                <td>{{ prescripciones[8] }}</td>
+                                <td>{{ prescripciones[9] }}</td>
+                                <td>{{ prescripciones[10] }}</td>
+                                <td>{{ prescripciones[11] }}</td>
+                                <td>{{ prescripciones[12] }}</td>
+                                <td>{{ prescripciones[13] }}</td>
+                                <td>{{ prescripciones[14] }}</td>
+                                <td>{{ prescripciones[15] }}</td>
+                                <td>{{ prescripciones[16] }}</td>
+
+                                <td>
+                                    <form action="{{ url_for('generate_pdf') }}" method="post">
+                                        <!-- Incluir todos los campos necesarios como campos ocultos -->
+                                        <input type="hidden" name="nombre_doc" value="{{ prescripciones[4] }}">
+                                        <input type="hidden" name="correo_doc" value="{{ prescripciones[5] }}">
+                                        <input type="hidden" name="Lugar_Pres" value="{{ prescripciones[6] }}">
+                                        <input type="hidden" name="Fecha_Pres" value="{{ prescripciones[7] }}">
+                                        <input type="hidden" name="nombre_paciente" value="{{ prescripciones[8] }}">
+                                        <input type="hidden" name="cedula_paciente" value="{{ prescripciones[9] }}">
+                                        <input type="hidden" name="numero_hc" value="{{ prescripciones[10] }}">
+                                        <input type="hidden" name="tipo_usuario" value="{{ prescripciones[11] }}">
+                                        <input type="hidden" name="forma_farmaceutica" value="{{ prescripciones[12] }}">
+                                        <input type="hidden" name="dosis_diaria" value="{{ prescripciones[13] }}">
+                                        <input type="hidden" name="duracion_tratamiento" value="{{ prescripciones[14] }}">
+                                        <input type="hidden" name="cantidad_total" value="{{ prescripciones[15] }}">
+                                        <input type="hidden" name="diagnostico" value="{{ prescripciones[16] }}">
+                                        <!-- ... otros campos ... -->
+                                        <button type="submit" class="btn btn-primary">Generar PDF</button>
+                                    </form>
+                                </td>
+                            <!-- Tus celdas de tabla aquí, utilizando los datos de prescripcion -->
+                        </tr>
+                        {% endfor %}
+                    <!-- Aquí se insertarán los registros mediante Flask -->
+                </tbody>
+                
+            </table>
+        </div>
+    </div>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -34,6 +34,13 @@ def verificar_credencialesMedico(username, password):
         return result[0], True  # Devuelve el ID y True si las credenciales son correctas
     return None, False
 
+def verificar_credencialesFarmacia(username, password):
+    cursor.execute("SELECT id, usuario, contraseña FROM farmalogin WHERE usuario = %s AND contraseña = %s", (username, password,))
+    result = cursor.fetchone()
+    if result and result[2] == password:
+        return result[0], True  # Devuelve el ID y True si las credenciales son correctas
+    return None, False
+
 def obtener_medicamentos():
     # Consulta SQL que devuelve todos los medicamentos en la BD
     cursor.execute("SELECT * FROM medicamentos_Stock")
@@ -43,14 +50,20 @@ def obtener_medicamentos():
 
 def guardar_prescripcion(data):
     medico_id = session.get('medico_id')
-
-
     cursor.execute(
         "INSERT INTO prescripciones (id_medico, id_medicamento, nombre_medicamento, nombre_doc, correo_doc, lugar_prescripcion, fecha_prescripcion, nombre_paciente, cedula_paciente, numero_hc, tipo_usuario, dosis_diaria, duracion_tratamiento, cantidad_total_medicamento) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (medico_id, 1, data['forma_farmaceutica'], data['nombre_doc'], data['correo_doc'], data['Lugar_Pres'], data['Fecha_Pres'], data['nombre_paciente'], data['cedula_paciente'], data['numero_hc'], data['tipo_usuario'], data['dosis_diaria'], data['duracion_tratamiento'], data['cantidad_total'])
     )
     conn.commit()
 
+
+def obtener_prescripciones_medico(medico_id):
+    cursor.execute(
+        "SELECT * FROM prescripciones WHERE id_medico = %s",
+        (medico_id,)
+    )
+    prescripciones = cursor.fetchall()
+    return prescripciones
 
 
 ## ----------------------------------------------------------------------------- RUTAS -----------------------------------------------------------------------------
@@ -101,12 +114,10 @@ def login():
         flash('Usuario o contraseña incorrectos.', 'warning')  # 'warning' es la categoría del mensaje
         return redirect(url_for('index'))  # Puedes mostrar un mensaje de error en tu página de inicio de sesión
     
-
 @app.route('/DashboardPaciente')
 def DashboardPaciente():
     nombre_usuario = session.get('nombre_usuario')
     return render_template('dashboardPaciente.html', nombre_usuario = nombre_usuario)
-    
 
 ## ----------------------------------------------------------------------------- MEDICO -----------------------------------------------------------------------------
 
@@ -186,6 +197,23 @@ def ver_registros():
     # Pasar la lista de registros al template.
     return render_template('VerRegistro.html', registros=registros)
 
+@app.route('/prescripcionesPacientesLista')
+def prescripcionesPacientesLista():
+    medico_id = session.get('medico_id')
+    if medico_id:
+        prescripciones = obtener_prescripciones_medico(medico_id)
+        print(prescripciones)
+        return render_template('prescripcionesPacientes.html', prescripciones=prescripciones)
+    else:
+        # Redirigir al médico a la página de inicio de sesión si no ha iniciado sesión
+        return redirect(url_for('loginMedico'))
+    
+@app.route('/listaMedicamentos')
+def listaMedicamentos():
+        medicamentos = obtener_medicamentos()
+        print(medicamentos)
+        return render_template('stockMedicamentos.html', medicamentos=medicamentos)
+        # Redirigir al médico a la página de inicio de sesión si no ha iniciado sesión
 
 ## ----------------------------------------------------------------------------- GENERAR_PDF -----------------------------------------------------------------------------
 config= pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
@@ -197,8 +225,6 @@ def generate_pdf():
         # Recoger datos del formulario
         data = request.form.to_dict()
         ##print(data)
-
-
 
         nombre_doc = data['nombre_doc']
         correo_doc = data['correo_doc']
@@ -218,7 +244,7 @@ def generate_pdf():
         html = render_template('plantillapdf_Prescripcion.html', data=data)
 
         # Ruta para el archivo PDF de salida
-        pdf_output = "output.pdf"
+        pdf_output = "Prescripcion.pdf"
 
         # Configuración de pdfkit
         pdfkit.from_string(html, pdf_output, configuration=config)
@@ -227,6 +253,28 @@ def generate_pdf():
         return send_file(pdf_output, as_attachment=True)
 
     return render_template('muestra.html')
+
+
+
+## ----------------------------------------------------------------------------- FARMACIA -------------------------------------------------------------------------
+
+@app.route('/loginFarmacia', methods=['POST'])
+def loginFarm():    
+    username = request.form['username']
+    password = request.form['password']
+
+    if verificar_credencialesFarmacia(username, password):
+        session['nombre_usuario'] = username
+        return redirect(url_for('DashboardFarmacia'))  # Puedes cambiar esto a una redirección
+    else:
+        flash('Usuario o contraseña incorrectos.', 'warning')  # 'warning' es la categoría del mensaje
+        return redirect(url_for('farmacia'))  # Puedes mostrar un mensaje de error en tu página de inicio de sesión
+
+
+@app.route('/DashboardFarmacia')
+def DashboardFarmacia():
+    nombre_usuario = session.get('nombre_usuario')
+    return render_template('DashboardFarmacia.html', nombre_usuario = nombre_usuario)
 
 
 ## ----------------------------------------------------------------------------- MAIN -----------------------------------------------------------------------------

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DashboardMedico</title>
+    <title>Farmacia {{ nombre_usuario }}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -31,11 +31,10 @@
 </head>
 <body>
     <div class="container text-center">
-        <p>¡Hola Dr. {{ nombre_usuario }}! ¿Qué quieres hacer hoy?</p>
+        <p>¡Hola {{ nombre_usuario }}! ¿Qué quieres hacer hoy?</p>
 
-        <a href="{{ url_for('RegistroBos') }}" class="btn btn-info">Generar Una Prescripcion</a>
-        <a href="{{ url_for('prescripcionesPacientesLista') }}" class="btn btn-info">Observar Historias Clinicas</a>
-        <a href="{{ url_for('listaMedicamentos') }}" class="btn btn-info">Verificar Stock Medicamentos</a>
+        <a href="{{ url_for('listaMedicamentos') }}" class="btn btn-info">Verificar Medicamentos</a>
+        <a href="{{ url_for('RegistroBos') }}" class="btn btn-info">Agregar O Eliminar Medicamentos</a>
     </div>
     <!-- Scripts de Bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
