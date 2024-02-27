@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Nuevo Medicamento</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            max-width: 600px; /* Ajuste para que sea un poco más estrecho y centrado */
+            margin: auto; /* Centra el contenedor en la página */
+        }
+
+        h2 {
+            margin-bottom: 30px;
+            text-align: center; /* Asegura que el título esté centrado */
+        }
+
+        .btn-primary {
+            width: 100%; /* Hace que el botón de submit sea más ancho */
+            padding: 10px; /* Ajuste para un padding superior e inferior */
+            margin-top: 20px; /* Espacio antes del botón submit */
+        }
+
+        .form-group {
+            margin-bottom: 20px; /* Espacio entre campos del formulario */
+        }
+
+        label {
+            margin-bottom: 5px; /* Espacio entre la etiqueta y el input */
+        }
+
+        .form-control {
+            box-shadow: none; /* Elimina el shadow de los inputs para que quede más limpio */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Agregar Nuevo Medicamento</h2>
+        <form action="/agregarMedicamento" method="POST">
+            <div class="form-group">
+                <label for="nombre">Nombre del Medicamento:</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="form-group">
+                <label for="cantidad">Cantidad:</label>
+                <input type="number" class="form-control" id="cantidad" name="cantidad" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+        </form>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicamentos en Stock</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            max-width: 90%; /* Ajusta el ancho máximo */
+            margin: auto; /* Centra el contenedor en la página */
+        }
+
+        .table {
+            margin-top: 20px;
+        }
+
+        .thead-dark th {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Stock de Medicamentos</h2>
+
+        <div class="mb-4 text-right">
+            <a href="{{ url_for('agregar_medicamento') }}" class="btn btn-success"><i class="fas fa-plus"></i> Agregar Nuevo Medicamento</a>
+        </div>
+
+        <div class="table-responsive">
+
+            <form action="/editar/<int:medicamento_id>" method="POST">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Id Medicamento</th>
+                            <th>Nombre del Medicamento</th>
+                            <th>Cantidad del Medicamento</th>
+                            <th>Acciones</th> <!-- Nueva columna para los botones de acción -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medicamento in medicamentos %}
+                        <form action="/editar/{{ medicamento[0] }}" method="POST">
+                            <tr>
+                                <td>{{ medicamento[0] }}</td>
+                                <td>{{ medicamento[1] }}</td>
+                                <td><input type="number" name="cantidad" value="{{ medicamento[2] }}" required></td>
+                                <td>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></button>
+                                    <a href="/eliminar/{{ medicamento[0] }}" class="btn btn-danger"><i class="fas fa-trash-alt"></i></a>
+                                </td>
+                            </tr>
+                        </form>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

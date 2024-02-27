@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Paciente {{ nombre_usuario }}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -22,22 +22,44 @@
             margin-bottom: 30px;
             font-weight: 300;
         }
+
         .btn {
             width: 100%;
             padding: 15px; /* Ajustado para hacer los botones más altos */
             margin-bottom: 20px; /* Ajustado para más espacio entre botones */
         }
+        
+        h1 {
+            color: #333;
+        }
+
+        a.salir {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            float: right; /* Alinea el botón a la derecha */
+        }
+
+        a.salir:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
+    <a href="{{ url_for('index')}}" class="salir">Salir </a>
     <div class="container text-center">
         <p>¡Hola {{ nombre_usuario }}! ¿Qué quieres hacer hoy?</p>
-        <a href="/ver_formulas_medicas" class="btn btn-info">Ver Fórmulas Médicas</a>
-        <a href="/ver_historia_clinica" class="btn btn-info">Ver Historia Clínica</a>
+        <a href="{{ url_for('prescripcionesUserLista') }}" class="btn btn-info">Observar Una Prescripcion</a>
     </div>
     <!-- Scripts de Bootstrap -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

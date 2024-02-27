@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualización de Registros</title>
+    <title>Visualización de Registros de {{ nombre_usuario }}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -45,7 +45,7 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Registros de Prescripciones Médicas</h2>
+        <h2 class="text-center mb-4">Registros de Prescripciones Médicas de {{ nombre_usuario }}</h2>
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="thead-dark">
@@ -85,19 +85,19 @@
                                 <td>
                                     <form action="{{ url_for('generate_pdf') }}" method="post">
                                         <!-- Incluir todos los campos necesarios como campos ocultos -->
-                                        <input type="hidden" name="nombre_doc" value="{{ prescripciones[4] }}">
-                                        <input type="hidden" name="correo_doc" value="{{ prescripciones[5] }}">
-                                        <input type="hidden" name="Lugar_Pres" value="{{ prescripciones[6] }}">
-                                        <input type="hidden" name="Fecha_Pres" value="{{ prescripciones[7] }}">
-                                        <input type="hidden" name="nombre_paciente" value="{{ prescripciones[8] }}">
-                                        <input type="hidden" name="cedula_paciente" value="{{ prescripciones[9] }}">
-                                        <input type="hidden" name="numero_hc" value="{{ prescripciones[10] }}">
-                                        <input type="hidden" name="tipo_usuario" value="{{ prescripciones[11] }}">
-                                        <input type="hidden" name="forma_farmaceutica" value="{{ prescripciones[12] }}">
-                                        <input type="hidden" name="dosis_diaria" value="{{ prescripciones[13] }}">
-                                        <input type="hidden" name="duracion_tratamiento" value="{{ prescripciones[14] }}">
-                                        <input type="hidden" name="cantidad_total" value="{{ prescripciones[15] }}">
-                                        <input type="hidden" name="diagnostico" value="{{ prescripciones[16] }}">
+                                        <input type="hidden" name="nombre_doc" value="{{ prescripciones[5] }}">
+                                        <input type="hidden" name="correo_doc" value="{{ prescripciones[6] }}">
+                                        <input type="hidden" name="Lugar_Pres" value="{{ prescripciones[7] }}">
+                                        <input type="hidden" name="Fecha_Pres" value="{{ prescripciones[8] }}">
+                                        <input type="hidden" name="nombre_paciente" value="{{ prescripciones[9] }}">
+                                        <input type="hidden" name="cedula_paciente" value="{{ prescripciones[10] }}">
+                                        <input type="hidden" name="numero_hc" value="{{ prescripciones[11] }}">
+                                        <input type="hidden" name="tipo_usuario" value="{{ prescripciones[12] }}">
+                                        <input type="hidden" name="forma_farmaceutica" value="{{ prescripciones[13] }}">
+                                        <input type="hidden" name="dosis_diaria" value="{{ prescripciones[14] }}">
+                                        <input type="hidden" name="duracion_tratamiento" value="{{ prescripciones[15] }}">
+                                        <input type="hidden" name="cantidad_total" value="{{ prescripciones[16] }}">
+                                        <input type="hidden" name="diagnostico" value="{{ prescripciones[17] }}">
                                         <!-- ... otros campos ... -->
                                         <button type="submit" class="btn btn-primary">Generar PDF</button>
                                     </form>

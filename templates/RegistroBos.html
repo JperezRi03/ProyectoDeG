@@ -48,12 +48,16 @@
 
                             <div class="form-group">
                                 <label for="Fecha_Pres">Fecha de la Prescripcion:</label>
-                                <input type="date" class="form-control" id="Fecha_Pres" name="Fecha_Pres">
+                                <input type="date" class="form-control" id="Fecha_Pres" name="Fecha_Pres" required>
                             </div>
 
                             <div class="form-group">
                                 <label for="Nombre_Paciente">Nombre del Paciente:</label>
-                                <input type="text" class="form-control" id="Nombre_Paciente" name="Nombre_Paciente" placeholder="Nombre del Paciente">
+                                <select class="form-control" id="Nombre_Paciente" name="Nombre_Paciente">
+                                    {% for usuarios in pacientes %}
+                                    <option value="{{ usuarios[1] }}">{{ usuarios[0] }} - {{ usuarios[1] }} </option>
+                                    {% endfor %}
+                                </select>  
                             </div>
 
                             <div class="form-group">
