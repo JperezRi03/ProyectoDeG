@@ -101,3 +101,10 @@ def modificar_medicamento_por_id( nueva_cantidad, medicamento_id):
                 ( nueva_cantidad, medicamento_id)
             )
      conn.commit()
+
+def actualizar_prescripcion_con_hash(hash_unico, prescripcion_id):
+    cursor.execute(
+        "UPDATE prescripciones SET hash_unico = %s WHERE id_prescripcion = %s",
+        (hash_unico, prescripcion_id)
+    )
+    conn.commit()

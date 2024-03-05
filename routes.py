@@ -1,5 +1,9 @@
 from flask import render_template, request, redirect, url_for, session, flash, send_file
 import pdfkit
+import os
+import qrcode
+import secrets
+import hashlib
 from queries import *
 
 def register_routes(app):
@@ -39,6 +43,7 @@ def register_routes(app):
         user_id = session.get('userId')
         if user_id:
             prescripciones = obtener_prescripciones_paciente(user_id)
+            print(prescripciones)
             return render_template('prescripcionesUserLista.html', prescripciones=prescripciones)
         else:
             # Redirigir al médico a la página de inicio de sesión si no ha iniciado sesión
@@ -216,38 +221,88 @@ def register_routes(app):
     ## ----------------------------------------------------------------------------- GENERAR_PDF -----------------------------------------------------------------------------
     config= pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
+    def generar_token_unico():
+    # Genera un token seguro único
+        return secrets.token_urlsafe(16)
+
+    def generar_hash(prescripcion_id, token):
+    # Genera un hash único basado en el ID de la prescripción y el token
+        cadena = f"{prescripcion_id}{token}"
+        return hashlib.sha256(cadena.encode()).hexdigest()
 
     @app.route('/generate_pdf', methods=['GET', 'POST'])
     def generate_pdf():
-        if request.method == 'POST':
-            # Recoger datos del formulario
+        if request.method == 'POST':            
+            
             data = request.form.to_dict()
             ##print(data)
+            prescripcion_id = data['id_prescripcion']
 
-            nombre_doc = data['nombre_doc']
-            correo_doc = data['correo_doc']
-            Lugar_Pres = data['Lugar_Pres']
-            Fecha_Pres = data['Fecha_Pres']
-            nombre_paciente = data['nombre_paciente']
-            cedula_paciente = data['cedula_paciente']
-            numero_hc = data['numero_hc']
-            tipo_usuario = data['tipo_usuario']
-            forma_farmaceutica = data['forma_farmaceutica']
-            dosis_diaria = data['dosis_diaria']
-            duracion_tratamiento = data['duracion_tratamiento']
-            cantidad_total = data['cantidad_total']
-            diagnostico = data['diagnostico']
+            
 
             # Crear HTML a partir de la plantilla con los datos
             html = render_template('plantillapdf_Prescripcion.html', data=data)
+            token = generar_token_unico()
+            hash_unico = generar_hash(prescripcion_id, token)
+
+             # Actualizar la base de datos con el hash único
+            actualizar_prescripcion_con_hash(hash_unico, prescripcion_id)
 
             # Ruta para el archivo PDF de salida
-            pdf_output = "Prescripcion.pdf"
-
+            pdf_output = f"static/Styles/prescripcionesPDF/{hash_unico}.pdf"
+            
+            # Generar el código QR
+            qr_output = f"static/Styles/qr/{hash_unico}.png"
+            url_descarga = url_for('descargar_pdf', hash_unico=hash_unico, _external=True)
+            qr = qrcode.make(url_descarga)
+            qr.save(qr_output)
             # Configuración de pdfkit
+            qr_path = f"static/Styles/qr/{hash_unico}.png"
+
+            # Actualiza el registro de la prescripción con el nuevo hash y marca como no usado
+            cursor.execute(
+                "UPDATE prescripciones SET usado = FALSE WHERE id_prescripcion = %s",
+                (prescripcion_id )
+            )
+            conn.commit()
+
             pdfkit.from_string(html, pdf_output, configuration=config)
+            return render_template('confirmacion.html', qr_path=qr_output, pdf_path=url_descarga)
 
             # Devolver el PDF al usuario para descargarlo
-            return send_file(pdf_output, as_attachment=True)
-
         return render_template('muestra.html')
+
+    @app.route('/descargar_pdf/<hash_unico>')
+    def descargar_pdf(hash_unico):
+        # Verificar en la base de datos si el hash ya ha sido utilizado
+        cursor.execute("SELECT usado FROM prescripciones WHERE hash_unico = %s", (hash_unico,))
+        resultado = cursor.fetchone()
+        
+        if resultado is None:
+            # Si no existe un registro con ese hash, es probablemente un enlace inválido
+            flash('El enlace es inválido o ha ocurrido un error.', 'error')
+            return redirect(url_for('index')) 
+        
+        usado = resultado[0]
+        if not usado:
+            # Si el hash no ha sido usado, marcarlo como usado y permitir la descarga
+            cursor.execute("UPDATE prescripciones SET usado = TRUE WHERE hash_unico = %s", (hash_unico,))
+            conn.commit()
+            path_al_pdf = f"static/Styles/prescripcionesPDF/{hash_unico}.pdf"
+            
+            if os.path.exists(path_al_pdf):
+                return send_file(path_al_pdf, as_attachment=True)
+            else:
+                flash('El archivo PDF solicitado no existe.', 'error')
+                return redirect(url_for('index'))  
+        else:
+            # Si el hash ya fue utilizado, redirigir a una página de error o mensaje
+            flash('Este enlace ya ha sido utilizado.', 'error')
+            return redirect(url_for('index'))
+    
+    
+
+
+# Define otras funciones para generar PDF aquí...
+
+## GENERAR UN NFT CON LOS DATOS, COGER LOS DATOS GENERAR UN NFT 
