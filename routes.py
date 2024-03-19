@@ -219,6 +219,7 @@ def register_routes(app):
         
     
     ## ----------------------------------------------------------------------------- GENERAR_PDF -----------------------------------------------------------------------------
+
     config= pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
 
     def generar_token_unico():
@@ -235,10 +236,7 @@ def register_routes(app):
         if request.method == 'POST':            
             
             data = request.form.to_dict()
-            ##print(data)
             prescripcion_id = data['id_prescripcion']
-
-            
 
             # Crear HTML a partir de la plantilla con los datos
             html = render_template('plantillapdf_Prescripcion.html', data=data)
@@ -300,9 +298,15 @@ def register_routes(app):
             flash('Este enlace ya ha sido utilizado.', 'error')
             return redirect(url_for('index'))
     
-    
-
-
-# Define otras funciones para generar PDF aquí...
-
 ## GENERAR UN NFT CON LOS DATOS, COGER LOS DATOS GENERAR UN NFT 
+
+
+## Multichain, Costo transaccional 0.25 y compro 7 dolares en multichain. 
+## Una aplicación web para la interacción con los usuarios, y una API REST para consumir los recursos de la plataforma de interoperabilidad. red Blockchain bajo la
+## plataforma Multichain, la cual contine un API JSON-RPC que recibe datos
+## transaccionales desde la plataforma de control y los transfiere entre los nodos de la cadena
+        
+## Multichain, 
+##https://meet.google.com/dfd-ghsi-cqt
+
+
