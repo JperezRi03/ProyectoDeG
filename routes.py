@@ -5,6 +5,8 @@ import qrcode
 import secrets
 import hashlib
 from queries import *
+from BlockChain import *
+
 
 def register_routes(app):
 
@@ -209,8 +211,6 @@ def register_routes(app):
     def agregar_medicamento():
         nombre = request.form['nombre']
         cantidad = request.form['cantidad']
-        # Aquí tu lógica para insertar el nuevo medicamento en la base de datos
-        # Por ejemplo:
         cursor.execute("INSERT INTO medicamentos_stock (n_medicamento, cantidad) VALUES (%s, %s)", (nombre, cantidad))
         conn.commit()
         return redirect('/AMEMedicamentos')
@@ -254,13 +254,23 @@ def register_routes(app):
             url_descarga = url_for('descargar_pdf', hash_unico=hash_unico, _external=True)
             qr = qrcode.make(url_descarga)
             qr.save(qr_output)
-            # Configuración de pdfkit
+            
+
             qr_path = f"static/Styles/qr/{hash_unico}.png"
+            respuesta_blockchain = generar_y_almacenar_nft(hash_unico, url_descarga)
+            if respuesta_blockchain is not None:
+                if 'error' not in respuesta_blockchain or respuesta_blockchain.get('error') is None:
+                    print("NFT creado con éxito. ID de transacción:", respuesta_blockchain.get('result'))
+                else:
+                    print("Error al crear NFT:", respuesta_blockchain.get('error'))
+            else:
+                print("La respuesta de la solicitud es None, lo que indica que no se pudo obtener una respuesta válida.")
+
 
             # Actualiza el registro de la prescripción con el nuevo hash y marca como no usado
             cursor.execute(
                 "UPDATE prescripciones SET usado = FALSE WHERE id_prescripcion = %s",
-                (prescripcion_id )
+                (prescripcion_id)
             )
             conn.commit()
 
@@ -298,8 +308,12 @@ def register_routes(app):
             flash('Este enlace ya ha sido utilizado.', 'error')
             return redirect(url_for('index'))
     
-## GENERAR UN NFT CON LOS DATOS, COGER LOS DATOS GENERAR UN NFT 
 
+##Quiero ingresar el BLOCKCHAIN ACA por lo menos para probarlo por ahora y cumplir con la conexion. 
+        
+
+
+## GENERAR UN NFT CON LOS DATOS, COGER LOS DATOS GENERAR UN NFT 
 
 ## Multichain, Costo transaccional 0.25 y compro 7 dolares en multichain. 
 ## Una aplicación web para la interacción con los usuarios, y una API REST para consumir los recursos de la plataforma de interoperabilidad. red Blockchain bajo la
