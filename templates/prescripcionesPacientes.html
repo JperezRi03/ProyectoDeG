@@ -64,6 +64,7 @@
                         <th>Duración del Tratamiento</th>
                         <th>Cantidad Total</th>
                         <th>Diagnóstico</th>
+                        <th>Codigo NFT</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,6 +84,7 @@
                                 <td>{{ prescripciones[15] }}</td>
                                 <td>{{ prescripciones[16] }}</td>
                                 <td>{{ prescripciones[17] }}</td>
+                                <td>{{ prescripciones[18] }}</td>
 
                                 <td>
                                     <form action="{{ url_for('generate_pdf') }}" method="post">
@@ -102,22 +104,71 @@
                                         <input type="hidden" name="cantidad_total" value="{{ prescripciones[16] }}">
                                         <input type="hidden" name="diagnostico" value="{{ prescripciones[17] }}">
                                         <!-- ... otros campos ... -->
-                                        <button type="submit" class="btn btn-primary">Generar PDF</button>
+                                        <button type="button" class="btn btn-primary" onclick="generarPDF(this.form)">Generar NFT</button>
                                     </form>
                                 </td>
-                            <!-- Tus celdas de tabla aquí, utilizando los datos de prescripcion -->
                         </tr>
                         {% endfor %}
-                    <!-- Aquí se insertarán los registros mediante Flask -->
                 </tbody>
                 
             </table>
         </div>
     </div>
 
+    <div class="modal fade" id="nftModal" tabindex="-1" role="dialog" aria-labelledby="nftModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="nftModalLabel">Estado de la Creación del NFT</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="nftStatusMessage">Generando NFT, por favor espere...</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generarPDF(form) {
+            // Mostrar el modal
+            $('#nftModal').modal('show');
+        
+            // Realizar la solicitud POST para generar el PDF y el NFT
+            $.ajax({
+                type: form.method,
+                url: form.action,
+                data: $(form).serialize(),
+                success: function(response) {
+                    if(response.success) {
+                        // Actualizar el mensaje del modal con el ID de la transacción
+                        $('#nftStatusMessage').text('NFT creado exitosamente. ID de transacción: ' + response.txid);
+                    } else {
+                        // Mostrar mensaje de error si la creación del NFT falló
+                        $('#nftStatusMessage').text('Error al crear el NFT: ' + response.error);
+                    }
+                },
+                error: function() {
+                    // Manejar errores de la solicitud AJAX
+                    $('#nftStatusMessage').text('Hubo un error al procesar la solicitud.');
+                }
+            });
+        }
+        </script>
+
     <!-- Scripts de Bootstrap -->
+
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
 </body>
 </html>

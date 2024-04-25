@@ -15,7 +15,6 @@ cursor = conn.cursor()
 def verificar_credenciales(username, password):
     cursor.execute("SELECT id, usuario, contraseña FROM userlogin WHERE usuario = %s AND contraseña = %s", (username, password,))
     result = cursor.fetchone()
-    print(result)
     if result and result[2] == password:
         return result[0], True
     return None, False
@@ -23,7 +22,6 @@ def verificar_credenciales(username, password):
 def verificar_credencialesMedico(username, password):
     cursor.execute("SELECT id, usuario, contraseña FROM medicoLogin WHERE usuario = %s AND contraseña = %s", (username, password,))
     result = cursor.fetchone()
-    print(result)
     if result and result[2] == password:
         return result[0], True  # Devuelve el ID y True si las credenciales son correctas
     return None, False
@@ -102,9 +100,69 @@ def modificar_medicamento_por_id( nueva_cantidad, medicamento_id):
             )
      conn.commit()
 
-def actualizar_prescripcion_con_hash(hash_unico, prescripcion_id):
+def actualizar_prescripcion_con_txid(txid_nft, hash_unico, prescripcion_id):
     cursor.execute(
-        "UPDATE prescripciones SET hash_unico = %s WHERE id_prescripcion = %s",
-        (hash_unico, prescripcion_id)
+        "UPDATE prescripciones SET txid_nft = %s, hash_unico = %s WHERE id_prescripcion = %s",
+        (txid_nft, hash_unico, prescripcion_id)
     )
     conn.commit()
+
+def existe_nft_prescripcion(prescripcion_id):
+    # Esta función debe consultar la base de datos y verificar si ya existe un txid_nft para la prescripción
+    cursor.execute("SELECT txid_nft FROM prescripciones WHERE id_prescripcion = %s", (prescripcion_id,))
+    resultado = cursor.fetchone()
+    return resultado is not None and resultado[0] is not None
+
+def actualizar_prescripcion_con_qr_url(qr_url, prescripcion_id):
+    try:
+        # Asegúrate de tener una conexión abierta a la base de datos (conn) y un cursor disponible
+        cursor.execute(
+            "UPDATE prescripciones SET qr_url = %s WHERE id_prescripcion = %s",
+            (qr_url, prescripcion_id)
+        )
+        conn.commit()
+        return True
+    except Exception as e:
+        print("Error al actualizar la URL del QR:", e)
+        return False
+
+def obtener_qr_url_por_txid(txid):
+    cursor.execute("SELECT qr_url FROM prescripciones WHERE txid_nft = %s", (txid,))
+    resultado = cursor.fetchone()
+    return resultado[0] if resultado else None
+
+def obtener_prescripcion_por_txid(txid):
+    try:
+        cursor.execute("SELECT * FROM prescripciones WHERE txid_nft = %s", (txid,))
+        resultado = cursor.fetchone()
+        if resultado:
+            # Construye un diccionario con los datos de la prescripción
+            prescripcion = {
+                'id_prescripcion': resultado[0],
+                'id_medico': resultado[1],
+                'id_medicamento': resultado[2],
+                'id_user': resultado[3],
+                'nombre_medicamento': resultado[4],
+                'nombre_doc': resultado[5],
+                'correo_doc': resultado[6],
+                'lugar_prescripcion': resultado[7],
+                'fecha_prescripcion': resultado[8],
+                'nombre_paciente': resultado[9],
+                'cedula_paciente': resultado[10],
+                'numero_hc': resultado[11],
+                'tipo_usuario': resultado[12],
+                'dosis_diaria': resultado[13],
+                'duracion_tratamiento': resultado[14],
+                'cantidad_total_medicamento': resultado[15],
+                'hash_unico': resultado[16],
+                'usado': resultado[17],
+                'txid_nft': resultado[18],
+                'qr_url': resultado[19]
+            }
+            return prescripcion
+        else:
+            return None
+    except Exception as e:
+        print("Error al obtener la prescripción por txid:", str(e))
+        return None
+

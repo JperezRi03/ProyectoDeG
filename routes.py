@@ -1,11 +1,13 @@
-from flask import render_template, request, redirect, url_for, session, flash, send_file
+from flask import render_template, request, redirect, url_for, session, flash, send_file, jsonify
 import pdfkit
 import os
 import qrcode
 import secrets
 import hashlib
+from werkzeug.utils import secure_filename
 from queries import *
 from BlockChain import *
+from qr_utils import *
 
 
 def register_routes(app):
@@ -50,6 +52,17 @@ def register_routes(app):
         else:
             # Redirigir al médico a la página de inicio de sesión si no ha iniciado sesión
             return redirect(url_for('login'))
+        
+    @app.route('/mostrar_qr/<txid>')
+    def mostrar_qr(txid):
+        print("TXID received:", txid)  # Esto te mostrará el TXID recibido
+        qr_url = obtener_qr_url_por_txid(txid)
+        if qr_url:
+            return send_file(qr_url, mimetype='image/png')
+        else:
+            flash('No se pudo encontrar el código QR.', 'error')
+            return redirect(url_for('index'))
+
 
 
 ##----------------------------------- ADMINISTRADOR -------------------------------------
@@ -139,7 +152,6 @@ def register_routes(app):
         registros = obtener_prescripciones_medico(session.get('medico_id'))
         return render_template('DashboardMedico.html', registros=registros)
 
-    # Define otras rutas y funciones asociadas aquí...
     @app.route('/prescripcionesPacientesLista')
     def prescripcionesPacientesLista():
         medico_id = session.get('medico_id')
@@ -214,10 +226,17 @@ def register_routes(app):
         cursor.execute("INSERT INTO medicamentos_stock (n_medicamento, cantidad) VALUES (%s, %s)", (nombre, cantidad))
         conn.commit()
         return redirect('/AMEMedicamentos')
-
-
-        
     
+    @app.route('/verificar_prescripcion', methods=['POST'])
+    def verificar_prescripcion():
+        txid = request.form['txid']
+        prescripcion = obtener_prescripcion_por_txid(txid)
+        if prescripcion and not prescripcion['usado']:
+            return jsonify({'success': True, 'prescripcion': prescripcion})
+        else:
+            return jsonify({'success': False, 'error': 'Prescripción no válida o ya utilizada'})
+    
+
     ## ----------------------------------------------------------------------------- GENERAR_PDF -----------------------------------------------------------------------------
 
     config= pdfkit.configuration(wkhtmltopdf="C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
@@ -234,66 +253,76 @@ def register_routes(app):
     @app.route('/generate_pdf', methods=['GET', 'POST'])
     def generate_pdf():
         if request.method == 'POST':            
-            
             data = request.form.to_dict()
             prescripcion_id = data['id_prescripcion']
+
+            # Verificar si ya existe un NFT para esta prescripción
+            if existe_nft_prescripcion(prescripcion_id):
+                return jsonify({'success': False, 'error': 'NFT ya creado para esta prescripción'})
 
             # Crear HTML a partir de la plantilla con los datos
             html = render_template('plantillapdf_Prescripcion.html', data=data)
             token = generar_token_unico()
             hash_unico = generar_hash(prescripcion_id, token)
-
-             # Actualizar la base de datos con el hash único
-            actualizar_prescripcion_con_hash(hash_unico, prescripcion_id)
-
-            # Ruta para el archivo PDF de salida
             pdf_output = f"static/Styles/prescripcionesPDF/{hash_unico}.pdf"
-            
-            # Generar el código QR
             qr_output = f"static/Styles/qr/{hash_unico}.png"
             url_descarga = url_for('descargar_pdf', hash_unico=hash_unico, _external=True)
             qr = qrcode.make(url_descarga)
             qr.save(qr_output)
-            
-
-            qr_path = f"static/Styles/qr/{hash_unico}.png"
-            respuesta_blockchain = generar_y_almacenar_nft(hash_unico, url_descarga)
-            if respuesta_blockchain is not None:
-                if 'error' not in respuesta_blockchain or respuesta_blockchain.get('error') is None:
-                    print("NFT creado con éxito. ID de transacción:", respuesta_blockchain.get('result'))
-                else:
-                    print("Error al crear NFT:", respuesta_blockchain.get('error'))
-            else:
-                print("La respuesta de la solicitud es None, lo que indica que no se pudo obtener una respuesta válida.")
-
-
-            # Actualiza el registro de la prescripción con el nuevo hash y marca como no usado
-            cursor.execute(
-                "UPDATE prescripciones SET usado = FALSE WHERE id_prescripcion = %s",
-                (prescripcion_id)
-            )
-            conn.commit()
-
             pdfkit.from_string(html, pdf_output, configuration=config)
-            return render_template('confirmacion.html', qr_path=qr_output, pdf_path=url_descarga)
 
-            # Devolver el PDF al usuario para descargarlo
-        return render_template('muestra.html')
+            # Crear NFT y obtener respuesta
+            respuesta_blockchain, nombre_unico_activo = generar_y_almacenar_nft(hash_unico, url_descarga)
+            print(respuesta_blockchain)
+
+            if respuesta_blockchain and (respuesta_blockchain.get('error') is None):
+                txid_nft = respuesta_blockchain['result']
+
+                direccion_medico = "16CKbjwLWwwuVY99wFm71cDHxTM6xCpJgTijwd"  # Reemplazar con la dirección real del médico
+                direccion_paciente = "1Hmx2WyQNCo4CyQsjJvwttzHv5DckpPRJCMVq5"  # Dirección del paciente  # DireccionDelPaciente
+
+                transferir_activo(direccion_medico, direccion_paciente, nombre_unico_activo, 1)
+
+                actualizar_prescripcion_con_txid(txid_nft, hash_unico, prescripcion_id)
+                actualizar_prescripcion_con_qr_url(qr_output, prescripcion_id)
+
+                return jsonify({'success': True, 'txid': txid_nft})
+            else:
+                return jsonify({'success': False, 'error': respuesta_blockchain.get('error', 'Error desconocido')})
 
     @app.route('/descargar_pdf/<hash_unico>')
     def descargar_pdf(hash_unico):
+        print(hash_unico)
         # Verificar en la base de datos si el hash ya ha sido utilizado
         cursor.execute("SELECT usado FROM prescripciones WHERE hash_unico = %s", (hash_unico,))
         resultado = cursor.fetchone()
         
         if resultado is None:
             # Si no existe un registro con ese hash, es probablemente un enlace inválido
-            flash('El enlace es inválido o ha ocurrido un error.', 'error')
-            return redirect(url_for('index')) 
+            return jsonify({'error': 'El enlace es inválido o ha ocurrido un error.'}), 404
         
         usado = resultado[0]
-        if not usado:
-            # Si el hash no ha sido usado, marcarlo como usado y permitir la descarga
+        if usado:
+            # Si el hash ya fue utilizado, redirigir a una página de error o mensaje
+            return jsonify({'error': 'Este enlace ya ha sido utilizado.'}), 400
+        else:
+            # Devolver información para la descarga sin marcar como usado
+            return jsonify({'message': 'El PDF está listo para ser descargado.', 'url': url_for('realizar_descarga', hash_unico=hash_unico, _external=True)})
+
+    @app.route('/realizar_descarga/<hash_unico>')
+    def realizar_descarga(hash_unico):
+        # Primero verifica si el hash ya ha sido utilizado
+        cursor.execute("SELECT usado FROM prescripciones WHERE hash_unico = %s", (hash_unico,))
+        resultado = cursor.fetchone()
+        if resultado is None:
+            # Si el resultado es None, significa que no se encontró el hash, podría ser un error o enlace inválido
+            return jsonify({'error': 'El enlace es inválido o ha ocurrido un error.'}), 404
+        elif resultado[0]:  # Comprobar si el valor de "usado" es True
+            # Si el hash ya fue utilizado, envía una respuesta de error
+            return jsonify({'error': 'Este enlace ya ha sido utilizado.'}), 403
+        else:
+            # Si no ha sido usado, marcarlo como usado y permitir la descarga
+            
             cursor.execute("UPDATE prescripciones SET usado = TRUE WHERE hash_unico = %s", (hash_unico,))
             conn.commit()
             path_al_pdf = f"static/Styles/prescripcionesPDF/{hash_unico}.pdf"
@@ -301,26 +330,43 @@ def register_routes(app):
             if os.path.exists(path_al_pdf):
                 return send_file(path_al_pdf, as_attachment=True)
             else:
-                flash('El archivo PDF solicitado no existe.', 'error')
-                return redirect(url_for('index'))  
-        else:
-            # Si el hash ya fue utilizado, redirigir a una página de error o mensaje
-            flash('Este enlace ya ha sido utilizado.', 'error')
-            return redirect(url_for('index'))
-    
+                return jsonify({'error': 'El archivo PDF solicitado no existe.'}), 404
 
-##Quiero ingresar el BLOCKCHAIN ACA por lo menos para probarlo por ahora y cumplir con la conexion. 
+
         
+## ----------------------------------------------------------------------------- QR LOGICS -----------------------------------------------------------------------------
+
+    UPLOAD_FOLDER = 'static\Styles\qr'
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+    @app.route('/procesar_qr', methods=['POST'])
+    def procesar_qr():
+        if 'qrImage' not in request.files:
+            return jsonify({'success': False, 'error': 'No se proporcionó ninguna imagen.'})
+
+        file = request.files['qrImage']
+        if file and allowed_file(file.filename):
+            qr_data = decodificar_imagen_qr(file)
+            if qr_data:
+                # Procesamiento adicional con qr_data si es necesario
+                return jsonify({'success': True, 'data': qr_data})
+            else:
+                return jsonify({'success': False, 'error': 'No se pudo decodificar el código QR.'})
+        
+        return jsonify({'success': False, 'error': 'Archivo no permitido o no proporcionado.'})
+
+    
 
 
 ## GENERAR UN NFT CON LOS DATOS, COGER LOS DATOS GENERAR UN NFT 
 
-## Multichain, Costo transaccional 0.25 y compro 7 dolares en multichain. 
 ## Una aplicación web para la interacción con los usuarios, y una API REST para consumir los recursos de la plataforma de interoperabilidad. red Blockchain bajo la
 ## plataforma Multichain, la cual contine un API JSON-RPC que recibe datos
 ## transaccionales desde la plataforma de control y los transfiere entre los nodos de la cadena
-        
-## Multichain, 
-##https://meet.google.com/dfd-ghsi-cqt
+
 
 
