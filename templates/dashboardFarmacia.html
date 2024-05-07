@@ -5,13 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farmacia {{ nombre_usuario }}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-
-
     <style>
+        /* Estilos existentes */
         body {
-            padding-top: 50px;
-            background-color: #f8f9fa;
-        }
+                padding-top: 80px; /* Ajuste para el nuevo header */
+                background-color: #e2e8f0;
+            }
+        .header {
+                position: fixed;
+                top: 0;
+                width: 100%;
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                height: 60px;
+                display: flex;
+                align-items: center;
+                padding: 0 20px; /* Padding horizontal para el contenido del header */
+            }
+        .header .salir {
+                margin-left: auto; /* Alinear el botón Salir a la derecha */
+                padding: 8px 15px;
+                background-color: #f43f5e;
+                color: white;
+                border-radius: 5px;
+                text-decoration: none;
+            }
         .container {
             background: white;
             padding: 50px;
@@ -20,43 +39,42 @@
             max-width: 600px; /* Ajustado para hacer el cuadro más grande */
             margin: auto;
         }
-        h3 {
-            margin-bottom: 30px;
-            font-weight: 300;
-        }
         .btn {
             width: 100%;
-            padding: 15px; /* Ajustado para hacer los botones más altos */
-            margin-bottom: 20px; /* Ajustado para más espacio entre botones */
+            padding: 15px;
+            margin-bottom: 20px;
         }
 
-        h1 {
-            color: #333;
-        }
-
-        a.salir {
-            background-color: #4CAF50;
+        /* Estilos para el header y footer */
+        header, footer {
+            background-color: #3B5998;
             color: white;
             padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-            float: right; /* Alinea el botón a la derecha */
+            text-align: center;
+            border-radius: 0;
         }
-
-        a.salir:hover {
-            background-color: #45a049;
+        footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+        }
+        a {
+            color: white;
         }
     </style>
 </head>
 <body>
-    <a href="{{ url_for('farmacia_index')}}" class="salir"  >Salir</a>
+    <div class="header">
+        <a href="{{ url_for('farmacia_index')}}" class="salir">Cerrar Sesión</a>
+    </div>
+
     <div class="container text-center">
         <p>¡Hola {{ nombre_usuario }}! ¿Qué quieres hacer hoy?</p>
 
-        <a href="{{ url_for('listaMedicamentos') }}" class="btn btn-info">Verificar Medicamentos</a>
+        <a href="{{ url_for('Medicamentoslista') }}" class="btn btn-info">Verificar Medicamentos</a>
         <a href="{{ url_for('AMEMedicamentos') }}" class="btn btn-info">Agregar O Eliminar Medicamentos</a>
 
         <div class="container text-center">
@@ -67,12 +85,14 @@
             </form>
             <div id="verificationResult" style="margin-top: 20px;"></div>
         </div>
-        
+
         <video id="qr-video" width="300" height="200" style="display:none;"></video>
         <button id="btn-scan-qr">Escanear QR</button>
-
-
     </div>
+
+    <footer>
+        <p>Farmacia {{ nombre_usuario }} © {{ current_year }}</p>
+    </footer>
 
     <script>
         $(document).ready(function() {

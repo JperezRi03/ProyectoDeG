@@ -10,6 +10,18 @@ from BlockChain import *
 from qr_utils import *
 
 
+##--------------------------- Medidor de Tiempos ---------------------------
+import time
+
+def cronometrar_funcion(func):
+    def wrapper(*args, **kwargs):
+        inicio = time.time()
+        resultado = func(*args, **kwargs)
+        fin = time.time()
+        print(f"Tiempo de ejecución de '{func.__name__}': {fin - inicio} segundos")
+        return resultado
+    return wrapper
+
 def register_routes(app):
 
 ##----------------------------------- PACIENTE -------------------------------------
@@ -78,10 +90,11 @@ def register_routes(app):
     
     @app.route('/RegistroBos')
     def RegistroBos():
+        nombre_usuario = session.get('nombre_usuario')
         medicamentos = obtener_medicamentos()   
         pacientes = all_usuarios()
         ##print(pacientes)
-        return render_template('RegistroBos.html',medicamentos=medicamentos , pacientes=pacientes)
+        return render_template('RegistroBos.html',nombre_usuario=nombre_usuario, medicamentos=medicamentos , pacientes=pacientes)
     
     @app.route('/DashboardMedico')
     def DashboardMedico():
@@ -105,6 +118,7 @@ def register_routes(app):
         
     registros = []
     @app.route('/DashboardMedico', methods=['GET', 'POST'])
+    ##@cronometrar_funcion ##Cronometrizar tiempos
     def registro():
         if request.method == 'POST':
             # Captura la información del formulario.
@@ -141,12 +155,14 @@ def register_routes(app):
 
             ##print(registro_info)
 
-            guardar_prescripcion(registro_info)
+            if guardar_prescripcion(registro_info):
+                flash("Prescripción guardada correctamente", "success")
+                return redirect(url_for('ver_registros'))
+            else:
+                return redirect(url_for('DashboardMedico'))
             
-            return redirect(url_for('ver_registros'))
-        
         return render_template('RegistroBos.html')
-
+    
     @app.route('/registros')
     def ver_registros():
         registros = obtener_prescripciones_medico(session.get('medico_id'))
@@ -169,18 +185,21 @@ def register_routes(app):
     def farmacia_index():
         return render_template('indexFarmacia.html')
 
+
     @app.route('/loginFarmacia', methods=['POST'])
-    def loginFarm():        
+    def loginFarmacia():
         username = request.form['username']
         password = request.form['password']
+        medico_id, authenticated = verificar_credencialesFarmacia(username, password)
+        ##print(medico_id, "ESTA ES LA ID DEL MEDICO")
 
-        if verificar_credencialesFarmacia(username, password):
+        if authenticated:
+            session['medico_id'] = medico_id
             session['nombre_usuario'] = username
-            return redirect(url_for('DashboardFarmacia'))  # Puedes cambiar esto a una redirección
+            return redirect(url_for('DashboardFarmacia'))
         else:
-            flash('Usuario o contraseña incorrectos.', 'warning')  # 'warning' es la categoría del mensaje
-            return redirect(url_for('farmacia'))  # Puedes mostrar un mensaje de error en tu página de inicio de sesión
-
+            flash('Usuario o contraseña incorrectos.', 'warning')
+            return redirect(url_for('index'))
 
     @app.route('/DashboardFarmacia')
     def DashboardFarmacia():
@@ -194,6 +213,13 @@ def register_routes(app):
         ##print(medicamentos)
         return render_template('stockMedicamentos.html', medicamentos=medicamentos)
         # Redirigir al médico a la página de inicio de sesión si no ha iniciado sesión
+    
+
+    @app.route('/Medicamentoslista')
+    def Medicamentoslista():
+        medicamentos = obtener_medicamentos()
+        ##print(medicamentos)
+        return render_template('medicamentoslista.html', medicamentos=medicamentos)
     
     @app.route('/AMEMedicamentos')
     def AMEMedicamentos():
@@ -249,7 +275,8 @@ def register_routes(app):
     # Genera un hash único basado en el ID de la prescripción y el token
         cadena = f"{prescripcion_id}{token}"
         return hashlib.sha256(cadena.encode()).hexdigest()
-
+    
+    ##@cronometrar_funcion
     @app.route('/generate_pdf', methods=['GET', 'POST'])
     def generate_pdf():
         if request.method == 'POST':            
@@ -291,6 +318,7 @@ def register_routes(app):
                 return jsonify({'success': False, 'error': respuesta_blockchain.get('error', 'Error desconocido')})
 
     @app.route('/descargar_pdf/<hash_unico>')
+    ##@cronometrar_funcion
     def descargar_pdf(hash_unico):
         print(hash_unico)
         # Verificar en la base de datos si el hash ya ha sido utilizado
@@ -322,7 +350,7 @@ def register_routes(app):
             return jsonify({'error': 'Este enlace ya ha sido utilizado.'}), 403
         else:
             # Si no ha sido usado, marcarlo como usado y permitir la descarga
-            
+
             cursor.execute("UPDATE prescripciones SET usado = TRUE WHERE hash_unico = %s", (hash_unico,))
             conn.commit()
             path_al_pdf = f"static/Styles/prescripcionesPDF/{hash_unico}.pdf"
@@ -358,15 +386,6 @@ def register_routes(app):
                 return jsonify({'success': False, 'error': 'No se pudo decodificar el código QR.'})
         
         return jsonify({'success': False, 'error': 'Archivo no permitido o no proporcionado.'})
-
-    
-
-
-## GENERAR UN NFT CON LOS DATOS, COGER LOS DATOS GENERAR UN NFT 
-
-## Una aplicación web para la interacción con los usuarios, y una API REST para consumir los recursos de la plataforma de interoperabilidad. red Blockchain bajo la
-## plataforma Multichain, la cual contine un API JSON-RPC que recibe datos
-## transaccionales desde la plataforma de control y los transfiere entre los nodos de la cadena
 
 
 

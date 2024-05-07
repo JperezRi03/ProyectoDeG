@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     })
                     .catch(error => {
                         console.error('Error al procesar la solicitud:', error);
-                        alert('Este QR ya ha sido utilizao.');
+                        alert('Este QR ya ha sido utilizado.');
                     });
             } else {
                 requestAnimationFrame(scanQRCode);

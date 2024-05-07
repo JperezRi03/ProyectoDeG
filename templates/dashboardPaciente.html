@@ -7,59 +7,109 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            padding-top: 50px;
-            background-color: #f8f9fa;
+            background-color: #e9ebee; /* Color de fondo similar al de Facebook */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Fuente común en interfaces modernas */
         }
+
         .container {
             background: white;
-            padding: 50px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px; /* Ajustado para hacer el cuadro más grande */
-            margin: auto;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada para un efecto 3D */
+            max-width: 600px;
+            margin: 40px auto; /* Mayor espacio desde la parte superior para centrar visualmente */
+            text-align: center;
         }
+
+        h1 {
+            color: #4b4f56; /* Color oscuro para el texto, común en Facebook */
+            margin-bottom: 10px; /* Menos espacio debajo del encabezado */
+        }
+
         h3 {
-            margin-bottom: 30px;
-            font-weight: 300;
+            color: #606770; /* Gris oscuro para textos menores, suave para la vista */
+            margin-bottom: 20px;
         }
 
         .btn {
-            width: 100%;
-            padding: 15px; /* Ajustado para hacer los botones más altos */
-            margin-bottom: 20px; /* Ajustado para más espacio entre botones */
+            background-color: #4267b2; /* Color azul de Facebook */
+            color: white;
+            border-radius: 4px;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            line-height: 1.5;
+            margin: 10px 0; /* Espacio vertical para separación */
         }
-        
-        h1 {
-            color: #333;
+
+        .btn:hover {
+            background-color: #365899; /* Un azul más oscuro al pasar el mouse */
         }
 
         a.salir {
-            background-color: #4CAF50;
+            background-color: #4267b2; /* Cohesión con el botón principal */
             color: white;
             padding: 10px 20px;
-            border: none;
             border-radius: 4px;
-            cursor: pointer;
             font-size: 16px;
             transition: background-color 0.3s;
-            float: right; /* Alinea el botón a la derecha */
+            position: absolute; /* Posicionar absolutamente para la derecha superior */
+            right: 10px;
+            top: 10px;
         }
 
         a.salir:hover {
-            background-color: #45a049;
+            background-color: #365899;
+        }
+
+        header, footer {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
 <body>
-    <a href="{{ url_for('index')}}" class="salir">Salir </a>
-    <div class="container text-center">
-        <p>¡Hola {{ nombre_usuario }}! ¿Qué quieres hacer hoy?</p>
-        <a href="{{ url_for('prescripcionesUserLista') }}" class="btn btn-info">Observar Una Prescripcion</a>
+    <div class="container">
+        <a href="{{ url_for('index') }}" class="salir">Salir</a>
+        <h1>Paciente {{ nombre_usuario }}</h1>
+        <h3>¡Hola {{ nombre_usuario }}! ¿Qué quieres hacer hoy?</h3>
+        <a href="{{ url_for('prescripcionesUserLista') }}" class="btn">Observar Una Prescripcion</a>
     </div>
+    <footer>
+        <p>&copy; {{ current_year }} Usuario {{ nombre_usuario }}. Todos los derechos reservados.</p>
+    </footer>
+
+            <!-- Modal de Bootstrap para aviso de cierre de sesión -->
+            <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" role="dialog" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="sessionTimeoutModalLabel">Aviso de Sesión</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Tu sesión está a punto de expirar por inactividad. ¿Deseas seguir conectado?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="logout()">Cerrar sesión</button>
+                            <button type="button" class="btn btn-primary" onclick="resetTimer()">Continuar sesión</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     <!-- Scripts de Bootstrap -->
+    <script src="{{ url_for('static', filename='JS/cierre.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

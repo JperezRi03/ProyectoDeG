@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Datos</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link rel="stylesheet" href="{{url_for('static', filename='Styles/stylesForm.css')}}">
-</head>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registro de Datos</title>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='Styles/stylesForm.css') }}">
+    </head>
 <body>
     <div class="container mt-5">
         <div class="card">
@@ -17,7 +15,10 @@
                 <h2>Registro de Datos</h2>
             </div>
             <div class="card-body">
-                <form method="post" action="/DashboardMedico">
+                <form method="post" action="/DashboardMedico" id="dataForm" novalidate>
+                    <div class="mb-3">
+                        <a href="{{ url_for('DashboardMedico') }}" class="btn btn-outline-primary"><i class="fas fa-arrow-left"></i> Atrás</a>
+                    </div>
                     <div class="row">
                         <!-- Columna izquierda -->
                         <div class="col-md-6">
@@ -27,27 +28,27 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-user-md"></i></span>
                                     </div>
-                                    <input type="text" class="form-control" id="Nombre_Doc" name="nombre_doc" placeholder="Nombre del Doctor">
+                                    <input type="text" class="form-control" id="Nombre_Doc" name="nombre_doc" value="{{ nombre_usuario }}" readonly>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="Correo_doc">Correo Electronico Del Doctor:</label>
+                                <label for="Correo_doc">Correo Electrónico Del Doctor:</label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-envelope"></i></span>
                                     </div>
-                                    <input type="email" class="form-control" id="Correo_doc" name="Correo_doc" placeholder="Correo electrónico">
+                                    <input type="email" class="form-control" id="Correo_doc" name="Correo_doc" placeholder="Correo electrónico" required>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="Lugar_Pres">Lugar de Prescripcion:</label>
+                                <label for="Lugar_Pres">Lugar de Prescripción:</label>
                                 <input type="text" class="form-control" id="Lugar_Pres" name="Lugar_Pres" placeholder="Lugar de Prescripción">
                             </div>
 
                             <div class="form-group">
-                                <label for="Fecha_Pres">Fecha de la Prescripcion:</label>
+                                <label for="Fecha_Pres">Fecha de la Prescripción:</label>
                                 <input type="date" class="form-control" id="Fecha_Pres" name="Fecha_Pres" required>
                             </div>
 
@@ -61,26 +62,25 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="Cedula_Paciente">Cedula del Paciente:</label>
-                                <input type="text" class="form-control" id="Cedula_Paciente" name="Cedula_Paciente" placeholder="Cédula del Paciente">
+                                <label for="Cedula_Paciente">Cédula del Paciente:</label>
+                                <input type="text" class="form-control" id="Cedula_Paciente" name="Cedula_Paciente" placeholder="Cédula del Paciente" required>
                             </div>
-
                         </div>
 
                         <!-- Columna derecha -->
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="numero_HC">N° Historia clinica:</label>
+                                <label for="numero_HC">N° Historia Clínica:</label>
                                 <input type="text" class="form-control" id="numero_HC" name="numero_HC" placeholder="N° Historia Clínica">
                             </div>
 
                             <div class="form-group">
-                                <label for="tipo_usuario">Tipo de usuario: (contributivo, subsidiado, particular, otro).</label>
+                                <label for="tipo_usuario">Tipo de usuario: (contributivo, subsidiado, particular, otro)</label>
                                 <input type="text" class="form-control" id="tipo_usuario" name="tipo_usuario" placeholder="Tipo de Usuario">
                             </div>
 
                             <div class="form-group">
-                                <label for="forma_farmaceutica">Medicamento Asignado.</label>
+                                <label for="forma_farmaceutica">Medicamento Asignado</label>
                                 <select class="form-control" id="forma_farmaceutica" name="forma_farmaceutica">
                                     {% for medicamento in medicamentos %}
                                         <option value="{{ medicamento[1] }}">{{ medicamento[0] }} - {{ medicamento[1] }} </option>
@@ -106,7 +106,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="diagnostico">Diagnostico:</label>
+                        <label for="diagnostico">Diagnóstico:</label>
                         <textarea class="form-control" id="diagnostico" name="diagnostico" rows="4" placeholder="Diagnóstico"></textarea>
                     </div>
 
@@ -118,11 +118,45 @@
         </div>
     </div>
 
-    <!-- Scripts necesarios para Bootstrap y Font Awesome -->
+    {% if get_flashed_messages() %}
+    <div class="container mt-3">
+        {% for message, category in get_flashed_messages(with_categories=true) %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+            <!-- Modal de Bootstrap para aviso de cierre de sesión -->
+            <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" role="dialog" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="sessionTimeoutModalLabel">Aviso de Sesión</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Tu sesión está a punto de expirar por inactividad. ¿Deseas seguir conectado?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="logout()">Cerrar sesión</button>
+                            <button type="button" class="btn btn-primary" onclick="resetTimer()">Continuar sesión</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    <!-- Scripts de Bootstrap -->
+    <script src="{{ url_for('static', filename='JS/cierre.js') }}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-
-</body>
+    <script src="{{ url_for('static', filename='JS/formValidation.js') }}"></script>
+    
+    </body>
 </html>

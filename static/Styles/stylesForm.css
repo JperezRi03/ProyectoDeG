@@ -1,29 +1,43 @@
 body {
-    background-color: #f4f8fd;
+    background-color: #ffffff; /* Fondo claro para mayor legibilidad */
+    font-family: 'Arial', sans-serif; /* Fuente más moderna */
 }
 
 .card {
     border: none;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Bordes más redondeados */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada para 3D feel */
 }
 
 .card-header {
-    background-color: #007bff;
-    color: white;
-    border-radius: 10px 10px 0 0;
+    background-color: #0056b3; /* Un azul más oscuro para mayor contraste */
+    color: #ffffff;
+    border-radius: 8px 8px 0 0;
     text-align: center;
+    padding: 20px; /* Más espacio interior */
+}
+
+.form-control:focus {
+    border-color: #0056b3; /* Borde azul cuando el input está enfocado */
+    box-shadow: 0 0 5px rgba(50, 50, 255, 0.25); /* Sombra sutil */
 }
 
 .btn-secondary {
     background-color: #007bff;
     border: none;
+    border-radius: 4px; /* Ligeramente redondeado para los botones */
 }
 
 .btn-secondary:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; /* Un hover más oscuro */
 }
 
-.form-control {
-    margin-bottom: 15px;
+.input-error {
+    border: 2px solid #ff0000; /* Rojo más llamativo para errores */
+}
+
+.error-message {
+    color: #ff0000;
+    font-size: 0.85rem; /* Un poco más grande para mejor visibilidad */
+    margin-top: 5px;
 }

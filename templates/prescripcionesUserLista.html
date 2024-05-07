@@ -6,17 +6,81 @@
     <title>Visualización de Registros de {{ nombre_usuario }}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background-color: #f4f4f4; font-family: Arial, sans-serif; }
-        .container { background-color: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); max-width: 90%; margin: auto; }
-        .table { margin-top: 20px; }
-        .thead-dark th { background-color: #343a40; color: white; }
-        .text-center { text-align: center; }
-        .mb-4 { margin-bottom: 1.5rem; }
+body {
+    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 90%;
+    margin: 2rem auto;
+}
+
+.table {
+    margin-top: 20px;
+    border-collapse: collapse; /* Elimina el espacio entre las celdas */
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f0f0f0; /* Color suave para hover */
+}
+
+.thead-dark th {
+    background-color: #0056b3; /* Un azul más suave y moderno */
+    color: white;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+    padding: 15px;
+    border-top: 1px solid #dee2e6;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #ffffff; /* Alternar colores para las filas */
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.btn-info {
+    color: #fff;
+    background-color: #17a2b8;
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: #138496;
+    border-color: #117a8b;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-4 {
+    margin-bottom: 2rem;
+}
     </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Registros de Prescripciones Médicas de {{ nombre_usuario }}</h2>
+        <div class="card-header">
+            <h2 class="text-center mb-4">Registros de Prescripciones Médicas de {{ nombre_usuario }}</h2>
+        </div>
+        <div class="card-body">
+            <!-- Botón de volver atrás -->
+            <div class="mb-3">
+                <a href="{{ url_for('DashboardPaciente') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-arrow-left"></i> Atrás
+                </a>
+            </div>
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="thead-dark">
@@ -33,7 +97,8 @@
                         <th>Dosis Diaria</th>
                         <th>Duración del Tratamiento</th>
                         <th>Cantidad Total</th>
-                        <th>Diagnóstico</th>
+                        <th>Numero de transaccion</th>
+                        <th>QR</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -47,11 +112,11 @@
                         <td>{{ prescripciones[10] }}</td>
                         <td>{{ prescripciones[11] }}</td>
                         <td>{{ prescripciones[12] }}</td>
+                        <td>{{ prescripciones[4] }}</td>
                         <td>{{ prescripciones[13] }}</td>
                         <td>{{ prescripciones[14] }}</td>
-                        <td>{{ prescripciones[15] }}</td>
+                        <td>{{ prescripciones[15] }} Unidades</td>
                         <td>{{ prescripciones[16] }}</td>
-                        <td>{{ prescripciones[17] }}</td>
                         <td>
                             {% if prescripciones[18] %}
                             <a href="{{ url_for('mostrar_qr', txid=prescripciones[18]) }}" class="btn btn-info">Ver QR</a>
@@ -62,8 +127,28 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-                
             </table>
+        </div>
+    </div>
+
+        <!-- Modal de Bootstrap para aviso de cierre de sesión -->
+    <div class="modal fade" id="sessionTimeoutModal" tabindex="-1" role="dialog" aria-labelledby="sessionTimeoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="sessionTimeoutModalLabel">Aviso de Sesión</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Tu sesión está a punto de expirar por inactividad. ¿Deseas seguir conectado?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="logout()">Cerrar sesión</button>
+                    <button type="button" class="btn btn-primary" onclick="resetTimer()">Continuar sesión</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -71,5 +156,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='JS/cierre.js') }}"></script>
 </body>
 </html>

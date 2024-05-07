@@ -8,24 +8,27 @@
     <style>
         body {
             background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         .container {
             background-color: #ffffff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            max-width: 90%; /* Ajusta el ancho máximo */
-            margin: auto; /* Centra el contenedor en la página */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 2rem;
         }
 
         .table {
             margin-top: 20px;
         }
 
+        .table-hover tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
         .thead-dark th {
-            background-color: #343a40;
+            background-color: #004085;
             color: white;
         }
 
@@ -33,19 +36,49 @@
             vertical-align: middle;
         }
 
-        .text-center {
-            text-align: center;
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
         }
 
-        .mb-4 {
-            margin-bottom: 1.5rem;
+        .btn-primary:hover {
+            background-color: #0056b3;
         }
+
+        /* Mejoras en los botones */
+        .btn-outline-primary {
+            border-color: #007bff;
+            color: #007bff;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* Responsive table */
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+
     </style>
     <!--- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
 </head>
 <body>
     <div class="container mt-5">
-        <h2 class="text-center mb-4">Registros de Prescripciones Médicas</h2>
+        <div class="card">
+            <div class="card-header">
+                <h2>Registros de Prescripciones Médicas</h2>
+            </div>
+            <div class="card-body">
+                <!-- Botón de volver atrás -->
+                <div class="mb-3">
+                    <a href="{{ url_for('DashboardMedico') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-left"></i> Atrás
+                    </a>
+                </div>
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
                 <thead class="thead-dark">
@@ -63,7 +96,7 @@
                         <th>Dosis Diaria</th>
                         <th>Duración del Tratamiento</th>
                         <th>Cantidad Total</th>
-                        <th>Diagnóstico</th>
+                        <th>Usado</th>
                         <th>Codigo NFT</th>
                     </tr>
                 </thead>
@@ -79,12 +112,11 @@
                                 <td>{{ prescripciones[10] }}</td>
                                 <td>{{ prescripciones[11] }}</td>
                                 <td>{{ prescripciones[12] }}</td>
+                                <td>{{ prescripciones[4] }}</td>
                                 <td>{{ prescripciones[13] }}</td>
                                 <td>{{ prescripciones[14] }}</td>
                                 <td>{{ prescripciones[15] }}</td>
                                 <td>{{ prescripciones[16] }}</td>
-                                <td>{{ prescripciones[17] }}</td>
-                                <td>{{ prescripciones[18] }}</td>
 
                                 <td>
                                     <form action="{{ url_for('generate_pdf') }}" method="post">
@@ -109,8 +141,7 @@
                                 </td>
                         </tr>
                         {% endfor %}
-                </tbody>
-                
+                </tbody>     
             </table>
         </div>
     </div>

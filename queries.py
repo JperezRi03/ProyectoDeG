@@ -1,6 +1,21 @@
 import psycopg2
 from flask import session
 
+
+##--------------------------- Medidor de Tiempos ---------------------------
+import time
+
+def cronometrar_funcion(func):
+    def wrapper(*args, **kwargs):
+        inicio = time.time()
+        resultado = func(*args, **kwargs)
+        fin = time.time()
+        print(f"Tiempo de ejecución de '{func.__name__}': {fin - inicio} segundos")
+        return resultado
+    return wrapper
+##--------------------------- Medidor de Tiempos ---------------------------
+
+
 # Establece la conexión a la base de datos
 conn = psycopg2.connect(
     dbname='postgres',
@@ -48,22 +63,25 @@ def all_usuarios():
     return data
 
 
-
+@cronometrar_funcion
 def guardar_prescripcion(data):
     medico_id = session.get('medico_id')
     cantidad_total = data['cantidad_total']
+
+    print(medico_id,cantidad_total)
+        # Hay suficiente stock, proceder con la inserción y actualización
     cursor.execute(
-            "INSERT INTO prescripciones (id_medico, id_medicamento, id_user , nombre_medicamento, nombre_doc, correo_doc, lugar_prescripcion, fecha_prescripcion, nombre_paciente, cedula_paciente, numero_hc, tipo_usuario, dosis_diaria, duracion_tratamiento, cantidad_total_medicamento) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-            (medico_id, 1, 1, data['forma_farmaceutica'], data['nombre_doc'], data['correo_doc'], data['Lugar_Pres'], data['Fecha_Pres'], data['nombre_paciente'], data['cedula_paciente'], data['numero_hc'], data['tipo_usuario'], data['dosis_diaria'], data['duracion_tratamiento'], cantidad_total)
-        )
-        
+        "INSERT INTO prescripciones (id_medico, id_medicamento, id_user, nombre_medicamento, nombre_doc, correo_doc, lugar_prescripcion, fecha_prescripcion, nombre_paciente, cedula_paciente, numero_hc, tipo_usuario, dosis_diaria, duracion_tratamiento, cantidad_total_medicamento) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (medico_id, 2, 2, data['forma_farmaceutica'], data['nombre_doc'], data['correo_doc'], data['Lugar_Pres'], data['Fecha_Pres'], data['nombre_paciente'], data['cedula_paciente'], data['numero_hc'], data['tipo_usuario'], data['dosis_diaria'], data['duracion_tratamiento'], cantidad_total)
+    )
+
         # Actualizar el stock del medicamento
     cursor.execute(
-            "UPDATE medicamentos_stock SET cantidad = CAST(Cantidad AS INT) - %s WHERE id_medicamento = 1",
-            (cantidad_total,)  # Se pasa como una tupla de un solo elemento
-        )
-    
+            "UPDATE medicamentos_stock SET cantidad = CAST(Cantidad AS INT) - %s WHERE id_medicamento = %s",
+            (cantidad_total, 2)
+    )
     conn.commit()
+    return True  # Indica éxito
 
 def obtener_prescripciones_medico(medico_id):
     cursor.execute(
@@ -79,6 +97,7 @@ def obtener_prescripciones_paciente(nombre_usuario):
         (nombre_usuario,)
     )
     prescripciones = cursor.fetchall()
+    print(prescripciones)
     return prescripciones
 
 def eliminar_medicamento_por_id(medicamento_id):
@@ -107,6 +126,7 @@ def actualizar_prescripcion_con_txid(txid_nft, hash_unico, prescripcion_id):
     )
     conn.commit()
 
+@cronometrar_funcion
 def existe_nft_prescripcion(prescripcion_id):
     # Esta función debe consultar la base de datos y verificar si ya existe un txid_nft para la prescripción
     cursor.execute("SELECT txid_nft FROM prescripciones WHERE id_prescripcion = %s", (prescripcion_id,))

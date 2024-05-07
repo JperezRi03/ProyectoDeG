@@ -2,6 +2,19 @@ import requests
 import json
 import hashlib
 
+##--------------------------- Medidor de Tiempos ---------------------------
+import time
+
+def cronometrar_funcion(func):
+    def wrapper(*args, **kwargs):
+        inicio = time.time()
+        resultado = func(*args, **kwargs)
+        fin = time.time()
+        print(f"Tiempo de ejecución de '{func.__name__}': {fin - inicio} segundos")
+        return resultado
+    return wrapper
+##--------------------------- Medidor de Tiempos ---------------------------
+
 
 def multichain_request(method, params=[]):
     
@@ -28,7 +41,7 @@ def generar_identificador_unico(data_string):
     # Usamos solo los primeros 10 caracteres del hash SHA256 para mantener el nombre del activo corto.
     return hashlib.sha256(data_string.encode()).hexdigest()[:10]
 
-
+##@cronometrar_funcion
 def generar_y_almacenar_nft(hash_unico, url_descarga):
     direccion_from = "16CKbjwLWwwuVY99wFm71cDHxTM6xCpJgTijwd"
     
@@ -55,6 +68,7 @@ def generar_y_almacenar_nft(hash_unico, url_descarga):
     return respuesta, nombre_unico_activo
 
 # Función para transferir un activo
+##@cronometrar_funcion
 def transferir_activo(from_address, to_address, asset_name, cantidad):
     # El nombre del activo y la cantidad ahora se pasan directamente sin usar un diccionario.
     params = [from_address, to_address, asset_name, cantidad, 0]  # Añade la cantidad directamente
